@@ -13,6 +13,7 @@ import SelectBox from "./component/SelectBox";
 import { IconAdjustments, IconAdOff } from "@tabler/icons-react";
 import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./component/Tabs";
+import { Grid, GridCol, GridRow } from "./component/Grid";
 // import { ErrorMessage, Field, Form, Formik } from 'formik';
 
 export default function Home() {
@@ -44,7 +45,7 @@ export default function Home() {
 
   return (
     <>
-      <Tabs defaultValue="tab1">
+      <Tabs defaultTab="tab1">
         <TabsList>
           <TabsTrigger value="tab1">Mẫu các component</TabsTrigger>
           <TabsTrigger value="tab2">サムネ画像自動更新</TabsTrigger>
@@ -73,6 +74,7 @@ export default function Home() {
                       isRequired={true}
                       label={"イベント名を入力"}
                       value={formik.values.title}
+                      width="lg"
                       placeholder="カスタムイベント名"
                       onChange={formik.handleChange}
                       direction="vertical"
@@ -87,6 +89,7 @@ export default function Home() {
                       isRequired={true}
                       label={"イベント"}
                       value={formik.values.age}
+                      width="sm"
                       placeholder="カスタムイベント名"
                       onChange={formik.handleChange}
                       direction="vertical"
@@ -101,6 +104,7 @@ export default function Home() {
                       isRequired={true}
                       label={"イベント"}
                       value={formik.values.price}
+                      width="md"
                       placeholder="カスタムイベント名"
                       onChange={formik.handleChange}
                       direction="vertical"
@@ -108,11 +112,23 @@ export default function Home() {
                     {formik.touched.price && formik.errors.price && (
                       <div className="text-red-500 text-sm mt-1">{formik.errors.price}</div>
                     )}
-
+                    <TextBox
+                      id=""
+                      name=""
+                      type="number"
+                      isRequired={true}
+                      label={"イベントsacsac"}
+                      value={""}
+                      width="full"
+                      placeholder="カスタムイベント名"
+                      onChange={formik.handleChange}
+                      direction="vertical"
+                    />
                     <SelectBox
                       id="selectBoxValue"
                       label="Chọn selectBoxValue"
                       name="selectBoxValue"
+                      width="md"
                       value={formik.values.selectBoxValue}
                       options={[
                         { value: "", label: "choose" },
@@ -235,7 +251,59 @@ export default function Home() {
             </Card>
           </div>
         </TabsContent>
-        <TabsContent value="tab2">Nội dung Tab 2</TabsContent>
+        <TabsContent value="tab2">
+
+          <Grid>
+            <GridRow cols={12} gap="gap-2">
+              <GridCol md={2} lg={2}>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Component Button</CardTitle>
+                    <CardDescription>mau nut button</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button style={{ background: "darkblue" }} variant="primary">primary</Button>
+                    <Button variant="secondary">secondary</Button>
+                    <Button variant="danger">danger</Button>
+                    <Button>sssss</Button>
+                  </CardContent>
+                </Card>
+
+              </GridCol>
+
+              <GridCol md={6} lg={4}>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Component Button</CardTitle>
+                    <CardDescription>mau nut button</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button style={{ background: "darkblue" }} variant="primary">primary</Button>
+                    <Button variant="secondary">secondary</Button>
+                    <Button variant="danger">danger</Button>
+                    <Button>sssss</Button>
+                  </CardContent>
+                </Card>
+              </GridCol>
+
+              <GridCol md={12} lg={4}>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Component Button</CardTitle>
+                    <CardDescription>mau nut button</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button style={{ background: "darkblue" }} variant="primary">primary</Button>
+                    <Button variant="secondary">secondary</Button>
+                    <Button variant="danger">danger</Button>
+                    <Button>sssss</Button>
+                  </CardContent>
+                </Card>
+              </GridCol>
+            </GridRow>
+          </Grid>
+
+        </TabsContent>
         <TabsContent value="tab3">Nội dung Tab 3</TabsContent>
       </Tabs>
 

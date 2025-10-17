@@ -4,12 +4,12 @@ import { cn } from "../lib/utils";
 
 // Tabs
 interface TabsProps {
-    defaultValue: string;
+    defaultTab: string;
     children: React.ReactNode;
     className?: string;
 }
-const Tabs = ({ defaultValue, children, className }: TabsProps) => {
-    const [activeTab, setActiveTab] = useState(defaultValue);
+const Tabs = ({ defaultTab, children, className }: TabsProps) => {
+    const [activeTab, setActiveTab] = useState(defaultTab);
 
     // React.cloneElement sẽ tự động truyền props cho các con
     const enhancedChildren = React.Children.map(children, (child: any) => {
