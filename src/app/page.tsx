@@ -2,29 +2,143 @@
 
 import Image from "next/image";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./component/Card";
-import { Input } from "./component/Input";
+import { TextBox } from "./component/TextBox";
 import { Button } from "./component/Button";
 import { Alert } from "./component/Alert";
+import * as Yup from 'yup';
+import { Field, FormikProvider, useFormik } from "formik";
+import { toast } from "react-toastify";
+import { NumberBox } from "./component/NumberBox";
+import SelectBox from "./component/SelectBox";
+import { IconAdjustments, IconAdOff } from "@tabler/icons-react";
+import Link from "next/link";
+// import { ErrorMessage, Field, Form, Formik } from 'formik';
 
 export default function Home() {
+
+  const formik = useFormik({
+    initialValues: {
+      title: "title",
+      age: "10",
+      price: "12.50",
+      selectBoxValue: "",
+    },
+    validationSchema: Yup.object({
+      title: Yup.string().required("Title must not be empty"),
+      age: Yup.number().required("Number must not be empty")
+        .min(0, "Min value is 0")
+        .max(9999, "Max value is 9999"),
+      price: Yup.number()
+        .required("Price is required")
+        .min(0, `Min value is 0`)
+        .max(9999.99, `Max value is 9999.99`),
+      selectBoxValue: Yup.string().required("Chọn selectBoxValue"),
+      // .min(0.0, "Price must be >= 0")
+      // .max(99999.9, "Price must be <= 10000"),
+    }),
+    onSubmit: async (values) => {
+      console.log("Form submitted:", values);
+    },
+  });
+
   return (
     <>
 
       <div className="container mx-auto px-4 py-8 max-w-6xl">
-        <h1 className="text-2xl font-bold text-gray-800">セールページ作成</h1>
+
+        <h1 className="text-2xl font-bold text-gray-800 mb-2">Form test</h1>
+        <Card>
+          <CardHeader>
+            <CardTitle>Thư viện Formik</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <IconAdjustments
+              size={48}
+              strokeWidth={2}
+              color={'black'}
+            />;
+            <FormikProvider value={formik}>
+              <form onSubmit={formik.handleSubmit}>
+                <TextBox
+                  id="title"
+                  name="title"
+                  type="text"
+                  isRequired={true}
+                  label={"イベント名を入力"}
+                  value={formik.values.title}
+                  placeholder="カスタムイベント名"
+                  onChange={formik.handleChange}
+                  direction="vertical"
+                />
+                {formik.touched.title && formik.errors.title && (
+                  <div className="text-red-500 text-sm mt-1">{formik.errors.title}</div>
+                )}
+                <TextBox
+                  id="age"
+                  name="age"
+                  type="number"
+                  isRequired={true}
+                  label={"イベント"}
+                  value={formik.values.age}
+                  placeholder="カスタムイベント名"
+                  onChange={formik.handleChange}
+                  direction="vertical"
+                />
+                {formik.touched.age && formik.errors.age && (
+                  <div className="text-red-500 text-sm mt-1">{formik.errors.age}</div>
+                )}
+                <TextBox
+                  id="price"
+                  name="price"
+                  type="number"
+                  isRequired={true}
+                  label={"イベント"}
+                  value={formik.values.price}
+                  placeholder="カスタムイベント名"
+                  onChange={formik.handleChange}
+                  direction="vertical"
+                />
+                {formik.touched.price && formik.errors.price && (
+                  <div className="text-red-500 text-sm mt-1">{formik.errors.price}</div>
+                )}
+
+                <SelectBox
+                  id="selectBoxValue"
+                  label="Chọn selectBoxValue"
+                  name="selectBoxValue"
+                  value={formik.values.selectBoxValue}
+                  options={[
+                    { value: "", label: "choose" },
+                    { value: "apple", label: "apple" },
+                    { value: "banana", label: "banana" },
+                    { value: "orange", label: "orange" },
+                  ]}
+                  isRequired={true}
+                  onChange={formik.handleChange}
+                />
+                {formik.touched.selectBoxValue && formik.errors.selectBoxValue && (
+                  <div className="text-red-500 text-sm mt-1">{formik.errors.selectBoxValue}</div>
+                )}
+              </form>
+            </FormikProvider>
+          </CardContent>
+          <CardFooter>
+            <Button type='submit' onClick={formik.submitForm}>
+              excecute
+            </Button>
+          </CardFooter>
+        </Card>
+
+        <h1 className="text-2xl font-bold text-gray-800 mb-2">セールページ作成</h1>
         <Card>
           <CardHeader>
             <CardTitle>カードタイトル</CardTitle>
             <CardDescription>カードdes</CardDescription>
           </CardHeader>
           <CardContent>
-            <Alert>
-              aaa
-            </Alert>
-            <Input
+            <TextBox
               id="custom-event-name"
               name="custom-event-name"
-              form="formName"
               isRequired={true}
               label={"イベント名を入力"}
               value={"aaaa"}
@@ -34,10 +148,9 @@ export default function Home() {
 
               }}
             />
-            <Input
+            <TextBox
               id="custom-event-name"
               name="custom-event-name"
-              form="formName"
               isRequired={false}
               label={"イベント名を入力"}
               value={"aaaa"}
@@ -46,7 +159,7 @@ export default function Home() {
 
               }}
             />
-            <Input
+            <TextBox
               id="custom-event-name"
               name="custom-event-name"
               form="formName"
@@ -95,6 +208,22 @@ export default function Home() {
             <Button variant="secondary">secondary</Button>
             <Button variant="danger">danger</Button>
             <Button>sssss</Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Component Icon</CardTitle>
+            <CardDescription>aaaa</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <IconAdOff
+              size={48}
+              strokeWidth={2}
+              color={'#000000'}
+            />
+            <p>Xem icon sử dụng tại: </p>
+            <Link href="https://tabler-icons-react.vercel.app/">https://tabler-icons-react.vercel.app/</Link>
           </CardContent>
         </Card>
       </div>
