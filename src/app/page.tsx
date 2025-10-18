@@ -14,6 +14,8 @@ import { IconAdjustments, IconAdOff } from "@tabler/icons-react";
 import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./component/Tabs";
 import { Grid, GridCol, GridRow } from "./component/Grid";
+import { Table } from "./component/Table";
+import { Badge } from "./component/Badge";
 // import { ErrorMessage, Field, Form, Formik } from 'formik';
 
 export default function Home() {
@@ -45,7 +47,7 @@ export default function Home() {
 
   return (
     <>
-      <Tabs defaultTab="tab1">
+      <Tabs defaultTab="tab3">
         <TabsList>
           <TabsTrigger value="tab1">Mẫu các component</TabsTrigger>
           <TabsTrigger value="tab2">サムネ画像自動更新</TabsTrigger>
@@ -171,32 +173,35 @@ export default function Home() {
 
                   }}
                 />
-                <TextBox
-                  id="custom-event-name"
-                  name="custom-event-name"
-                  isRequired={false}
-                  label={"イベント名を入力"}
-                  value={"aaaa"}
-                  placeholder="カスタムイベント名"
-                  onChange={() => {
+                <div className="flex flex-row">
+                  <TextBox
+                    id="custom-event-name"
+                    name="custom-event-name"
+                    isRequired={false}
+                    label={"イベント名を入力"}
+                    value={"aaaa"}
+                    placeholder="カスタムイベント名"
+                    onChange={() => {
 
-                  }}
-                />
-                <TextBox
-                  id="custom-event-name"
-                  name="custom-event-name"
-                  form="formName"
-                  isRequired={false}
-                  label={"イベント名を入力"}
-                  value={"aaaa"}
-                  placeholder="カスタムイベント名"
-                  onChange={() => {
+                    }}
+                  />
+                  <TextBox
+                    id="custom-event-name"
+                    name="custom-event-name"
+                    form="formName"
+                    isRequired={false}
+                    className="ml-1"
+                    label={"イベント名を入力"}
+                    value={"aaaa"}
+                    placeholder="カスタムイベント名"
+                    onChange={() => {
 
-                  }}
-                />
+                    }}
+                  />
+                </div>
               </CardContent>
               <CardFooter>
-                <Button variant="danger">Button footer</Button>
+                <Button color="primary">Button footer</Button>
               </CardFooter>
             </Card>
 
@@ -227,10 +232,15 @@ export default function Home() {
                 <CardDescription>mau nut button</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button style={{ background: "darkblue" }} variant="primary">primary</Button>
-                <Button variant="secondary">secondary</Button>
-                <Button variant="danger">danger</Button>
+                <Button style={{ background: "darkblue" }} color="primary">primary</Button>
+                <Button color="secondary">secondary</Button>
+                <Button color="primary">primary</Button>
                 <Button>sssss</Button>
+                <div className="">
+                  <Button size="sm">Size</Button>
+                  <Button size="md">Size</Button>
+                  <Button size="lg">Size</Button>
+                </div>
               </CardContent>
             </Card>
 
@@ -249,6 +259,27 @@ export default function Home() {
                 <Link href="https://tabler-icons-react.vercel.app/">https://tabler-icons-react.vercel.app/</Link>
               </CardContent>
             </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Component Icon</CardTitle>
+                <CardDescription>aaaa</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Badge color="primary">
+                  primary
+                </Badge>
+                <Badge color="secondary">
+                  secondary
+                </Badge>
+                <Badge color="success">
+                  success
+                </Badge>
+                <Badge color="warning">
+                  warning
+                </Badge>
+              </CardContent>
+            </Card>
           </div>
         </TabsContent>
         <TabsContent value="tab2">
@@ -262,9 +293,9 @@ export default function Home() {
                     <CardDescription>mau nut button</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <Button style={{ background: "darkblue" }} variant="primary">primary</Button>
-                    <Button variant="secondary">secondary</Button>
-                    <Button variant="danger">danger</Button>
+                    <Button style={{ background: "darkblue" }} color="primary">primary</Button>
+                    <Button color="secondary">secondary</Button>
+                    <Button color="primary">primary</Button>
                     <Button>sssss</Button>
                   </CardContent>
                 </Card>
@@ -278,9 +309,9 @@ export default function Home() {
                     <CardDescription>mau nut button</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <Button style={{ background: "darkblue" }} variant="primary">primary</Button>
-                    <Button variant="secondary">secondary</Button>
-                    <Button variant="danger">danger</Button>
+                    <Button style={{ background: "darkblue" }} color="primary">primary</Button>
+                    <Button color="secondary">secondary</Button>
+                    <Button color="primary">primary</Button>
                     <Button>sssss</Button>
                   </CardContent>
                 </Card>
@@ -293,9 +324,9 @@ export default function Home() {
                     <CardDescription>mau nut button</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <Button style={{ background: "darkblue" }} variant="primary">primary</Button>
-                    <Button variant="secondary">secondary</Button>
-                    <Button variant="danger">danger</Button>
+                    <Button style={{ background: "darkblue" }} color="primary">primary</Button>
+                    <Button color="secondary">secondary</Button>
+                    <Button color="primary">primary</Button>
                     <Button>sssss</Button>
                   </CardContent>
                 </Card>
@@ -304,7 +335,31 @@ export default function Home() {
           </Grid>
 
         </TabsContent>
-        <TabsContent value="tab3">Nội dung Tab 3</TabsContent>
+        <TabsContent value="tab3">
+          <Table.Root>
+            <Table.Head>
+              <Table.Row>
+                <Table.Th width="w-16">#</Table.Th>
+                <Table.Th width="w-40">商品管理番号*</Table.Th>
+                <Table.Th width="w-48">代替商品画像URL</Table.Th>
+                <Table.Th width="w-32">識別用文字列</Table.Th>
+                <Table.Th width="w-16" center>削除</Table.Th>
+              </Table.Row>
+            </Table.Head>
+            <Table.Body>
+              <Table.Row>
+                <Table.Td>1</Table.Td>
+                <Table.Td>AB123</Table.Td>
+                <Table.Td>https://example.com/image.png</Table.Td>
+                <Table.Td>id_string</Table.Td>
+                <Table.Td center>
+                  <button className="text-red-500 hover:text-red-700">削除</button>
+                </Table.Td>
+              </Table.Row>
+              {/* More rows */}
+            </Table.Body>
+          </Table.Root>
+        </TabsContent>
       </Tabs>
 
 
