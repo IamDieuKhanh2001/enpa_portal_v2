@@ -1,5 +1,5 @@
 import React, { Children } from 'react'
-import { cn } from '../lib/utils';
+import { cn } from '../../lib/utils';
 
 const styles: Record<string, string> = {
     success: "bg-green-50 text-green-800 border-green-200",

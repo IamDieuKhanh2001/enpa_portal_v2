@@ -1,5 +1,5 @@
 import React from 'react'
-import { cn } from '../lib/utils';
+import { cn } from '../../lib/utils';
 
 const widthClass: Record<string, string> = {
   // Tailwin css width
@@ -19,7 +19,7 @@ interface TextBoxProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 const TextBox = React.forwardRef<HTMLInputElement, TextBoxProps>(
 
-  ({ label, isRequired = false, id, name, width = "md", value, direction = 'vertical', className = '', ...props }, ref) => {
+  ({ label, isRequired = false, id, name, width = "full", value, direction = 'vertical', className = '', ...props }, ref) => {
 
     return (
       <>

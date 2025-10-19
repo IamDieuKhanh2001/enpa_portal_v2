@@ -3,6 +3,7 @@ import { cn } from "../lib/utils";
 import {
   IconChevronDown,
 } from "@tabler/icons-react";
+import { usePathname } from "next/navigation";
 
 interface NavItemProps {
   item: {
@@ -11,13 +12,16 @@ interface NavItemProps {
     href?: string;
     children?: { label: string; href: string }[];
   };
-  isExpanded: boolean;
-  openMenu: string | null;
+  isExpandedSideBar: boolean;
+  openDropdown: string | null;
   toggleMenu: (label: string) => void;
 }
-function NavItem({ item, isExpanded, openMenu, toggleMenu }: NavItemProps) {
+function NavItem({ item, isExpandedSideBar, openDropdown, toggleMenu }: NavItemProps) {
+
+  const currentPathname = usePathname();
+
   const Icon = item.icon;
-  const isOpen = openMenu === item.label;
+  const isOpenDropdown = openDropdown === item.label;
   const hasChildren = !!item.children?.length;
 
   const baseClasses =
@@ -30,7 +34,7 @@ function NavItem({ item, isExpanded, openMenu, toggleMenu }: NavItemProps) {
         <span
           className={cn(
             "transition-all duration-300 whitespace-nowrap",
-            isExpanded ? "opacity-100 translate-x-0" : "opacity-0 translate-x-5"
+            isExpandedSideBar ? "opacity-100 translate-x-0" : "opacity-0 translate-x-5"
           )}
         >
           {item.label}
@@ -45,7 +49,7 @@ function NavItem({ item, isExpanded, openMenu, toggleMenu }: NavItemProps) {
         onClick={() => toggleMenu(item.label)}
         className={cn(
           baseClasses,
-          isOpen ? "bg-red-50 text-red-600" : ""
+          isOpenDropdown ? "bg-red-50 text-red-600" : ""
         )}
       >
         <div className="flex items-center gap-3">
@@ -53,30 +57,33 @@ function NavItem({ item, isExpanded, openMenu, toggleMenu }: NavItemProps) {
           <span
             className={cn(
               "transition-all duration-300 whitespace-nowrap",
-              isExpanded ? "opacity-100 translate-x-0" : "opacity-0 translate-x-5"
+              isExpandedSideBar ? "opacity-100 translate-x-0" : "opacity-0 translate-x-5"
             )}
           >
             {item.label}
           </span>
         </div>
-        {isExpanded && (
+        {isExpandedSideBar && (
           <IconChevronDown
             size={14}
             className={cn(
               "transition-transform duration-300",
-              isOpen ? "rotate-180" : ""
+              isOpenDropdown ? "rotate-180" : ""
             )}
           />
         )}
       </button>
 
-      {hasChildren && isOpen && isExpanded && (
+      {hasChildren && isOpenDropdown && isExpandedSideBar && (
         <div className="pl-10 space-y-1">
           {item.children?.map((sub) => (
             <Link
               key={sub.label}
               href={sub.href}
-              className="block px-3 py-1.5 text-gray-500 hover:text-gray-700 transition"
+              className={cn(
+                "block px-3 py-1.5 text-gray-500 transition",
+                currentPathname === sub.href && "text-primary font-semibold"
+              )}
             >
               {sub.label}
             </Link>

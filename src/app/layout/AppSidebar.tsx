@@ -8,11 +8,11 @@ import navItems from './navItemList';
 import Link from 'next/link';
 
 const AppSidebar = () => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [isExpandedSideBar, setIsExpandedSideBar] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   const toggleMenu = (label: string) => {
-    setOpenMenu(openMenu === label ? null : label);
+    setOpenDropdown(openDropdown === label ? null : label);
   };
 
   return (
@@ -20,10 +20,10 @@ const AppSidebar = () => {
       <aside
         className={cn(
           "bg-white border-r border-gray-200 flex flex-col transition-all duration-300 overflow-hidden",
-          isExpanded ? "w-64" : "w-16"
+          isExpandedSideBar ? "w-64" : "w-16"
         )}
-        onMouseEnter={() => setIsExpanded(true)}
-        onMouseLeave={() => setIsExpanded(false)}
+        onMouseEnter={() => setIsExpandedSideBar(true)}
+        onMouseLeave={() => setIsExpandedSideBar(false)}
       >
         {/* --- Logo --- */}
         <Link href="/" className="block">
@@ -38,7 +38,7 @@ const AppSidebar = () => {
             <span
               className={cn(
                 "ml-3 font-semibold text-lg text-gray-800 transition-all duration-300 whitespace-nowrap",
-                isExpanded ? "opacity-100 translate-x-0" : "opacity-0 translate-x-5"
+                isExpandedSideBar ? "opacity-100 translate-x-0" : "opacity-0 translate-x-5"
               )}
             >
               エンパタウン株式会社
@@ -51,8 +51,8 @@ const AppSidebar = () => {
             <NavItem
               key={item.label}
               item={item}
-              isExpanded={isExpanded}
-              openMenu={openMenu}
+              isExpandedSideBar={isExpandedSideBar}
+              openDropdown={openDropdown}
               toggleMenu={toggleMenu}
             />
           ))}

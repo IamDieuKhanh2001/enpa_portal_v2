@@ -1,6 +1,6 @@
 // components/ui/Table.tsx
 import React from "react";
-import { cn } from "../lib/utils";
+import { cn } from "../../lib/utils";
 
 // Table element
 const TableRoot = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(

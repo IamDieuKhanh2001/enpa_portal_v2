@@ -15,6 +15,10 @@ const config: Config = {
         background: "#FFFFFF",
         "background-subtle": "#F3F4F6",
       },
+      text: {
+        base: "#1F2937",
+        muted: "#6B7280",
+      },
       fontFamily: {
         sans: ["var(--font-noto-sans-jp)", "Noto Sans JP", "sans-serif"],
       },
