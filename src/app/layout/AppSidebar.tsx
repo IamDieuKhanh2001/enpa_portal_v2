@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState } from 'react'
+import React, { useState } from "react";
 import Image from "next/image";
 import { cn } from "../lib/utils";
-import NavItem from './NavItem';
-import navItems from './navItemList';
-import Link from 'next/link';
+import NavItem from "./NavItem";
+import navItems from "./navItemList";
+import Link from "next/link";
 
 const AppSidebar = () => {
   const [isExpandedSideBar, setIsExpandedSideBar] = useState(false);
@@ -27,22 +27,29 @@ const AppSidebar = () => {
       >
         {/* --- Logo --- */}
         <Link href="/" className="block">
-          <div className="relative h-20 px-4 border-b border-gray-200 flex items-center">
+          <div className="relative h-20 px-4 border-b border-gray-200 flex items-center space-x-3">
             <Image
-              width={32}
-              height={32}
               src="/img/logo/emportal_logo.png"
-              alt="logo"
-              className="min-w-[32px]"
+              alt="EmpaPortal icon"
+              width={40}
+              height={40}
+              className="object-contain"
             />
-            <span
+
+            <div
               className={cn(
-                "ml-3 font-semibold text-lg text-gray-800 transition-all duration-300 whitespace-nowrap",
-                isExpandedSideBar ? "opacity-100 translate-x-0" : "opacity-0 translate-x-5"
+                "overflow-hidden transition-all duration-300",
+                isExpandedSideBar ? "opacity-100 w-[150px]" : "opacity-0 w-0"
               )}
             >
-              エンパタウン株式会社
-            </span>
+              <Image
+                src="/img/logo/emportal_logo_text.png"
+                alt="EmpaPortal text"
+                width={150}
+                height={40}
+                className="object-contain"
+              />
+            </div>
           </div>
         </Link>
         {/* --- Nav --- */}
@@ -59,7 +66,7 @@ const AppSidebar = () => {
         </nav>
       </aside>
     </>
-  )
-}
+  );
+};
 
-export default AppSidebar
+export default AppSidebar;
