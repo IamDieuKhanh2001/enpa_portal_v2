@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { cn } from "../lib/utils";
-import {
-  IconChevronDown,
-} from "@tabler/icons-react";
+import { IconChevronDown } from "@tabler/icons-react";
 import { usePathname } from "next/navigation";
 
 interface NavItemProps {
@@ -16,73 +14,89 @@ interface NavItemProps {
   openDropdown: string | null;
   toggleMenu: (label: string) => void;
 }
-function NavItem({ item, isExpandedSideBar, openDropdown, toggleMenu }: NavItemProps) {
 
-  const currentPathname = usePathname();
-
+function NavItem({
+  item,
+  isExpandedSideBar,
+  openDropdown,
+  toggleMenu,
+}: NavItemProps) {
+  const pathname = usePathname();
   const Icon = item.icon;
-  const isOpenDropdown = openDropdown === item.label;
+  const isOpen = openDropdown === item.label;
   const hasChildren = !!item.children?.length;
 
   const baseClasses =
-    "flex items-center justify-between w-full px-3 py-2 rounded-lg transition text-gray-700 hover:bg-gray-100";
+    "flex items-center justify-between w-full px-3 py-2 rounded-md text-gray-700 hover:bg-red-50 hover:text-[#EC332D] transition-all";
 
+  // Nếu không có children → Link trực tiếp
   if (!hasChildren && item.href) {
     return (
       <Link href={item.href} className={baseClasses}>
-        <Icon size={18} className="text-gray-500 shrink-0" />
-        <span
-          className={cn(
-            "transition-all duration-300 whitespace-nowrap",
-            isExpandedSideBar ? "opacity-100 translate-x-0" : "opacity-0 translate-x-5"
-          )}
-        >
-          {item.label}
-        </span>
-      </Link>
-    );
-  }
-
-  return (
-    <div className="space-y-1">
-      <button
-        onClick={() => toggleMenu(item.label)}
-        className={cn(
-          baseClasses,
-          isOpenDropdown ? "bg-red-50 text-red-600" : ""
-        )}
-      >
         <div className="flex items-center gap-3">
           <Icon size={18} className="text-gray-500 shrink-0" />
           <span
             className={cn(
-              "transition-all duration-300 whitespace-nowrap",
-              isExpandedSideBar ? "opacity-100 translate-x-0" : "opacity-0 translate-x-5"
+              "text-[13px] font-medium whitespace-nowrap transition-all duration-300",
+              isExpandedSideBar
+                ? "opacity-100 translate-x-0"
+                : "opacity-0 translate-x-5"
             )}
           >
             {item.label}
           </span>
         </div>
+      </Link>
+    );
+  }
+
+  // Nếu có children → Accordion
+  return (
+    <div className="space-y-1">
+      <button
+        onClick={() => toggleMenu(item.label)}
+        className={cn(baseClasses, isOpen ? "bg-red-50 text-[#EC332D]" : "")}
+      >
+        <div className="flex items-center gap-3">
+          <Icon size={18} className="text-gray-500 shrink-0" />
+          <span
+            className={cn(
+              "text-[13px] font-medium whitespace-nowrap transition-all duration-300",
+              isExpandedSideBar
+                ? "opacity-100 translate-x-0"
+                : "opacity-0 translate-x-5"
+            )}
+          >
+            {item.label}
+          </span>
+        </div>
+
         {isExpandedSideBar && (
           <IconChevronDown
             size={14}
             className={cn(
               "transition-transform duration-300",
-              isOpenDropdown ? "rotate-180" : ""
+              isOpen && "rotate-180"
             )}
           />
         )}
       </button>
 
-      {hasChildren && isOpenDropdown && isExpandedSideBar && (
-        <div className="pl-10 space-y-1">
+      {/* Danh sách tool con */}
+      {hasChildren && isOpen && isExpandedSideBar && (
+        <div
+          className={cn(
+            "pl-8 mt-1 overflow-hidden transition-[max-height] duration-300 ease-in-out",
+            isOpen ? "max-h-[500px]" : "max-h-0"
+          )}
+        >
           {item.children?.map((sub) => (
             <Link
               key={sub.label}
               href={sub.href}
               className={cn(
-                "block px-3 py-1.5 text-gray-500 transition",
-                currentPathname === sub.href && "text-primary font-semibold"
+                "block px-3 py-1.5 text-[12px] text-gray-600 rounded-md hover:bg-red-50 hover:text-[#EC332D] transition-all",
+                pathname === sub.href && "text-[#EC332D] font-semibold"
               )}
             >
               {sub.label}
@@ -94,4 +108,4 @@ function NavItem({ item, isExpandedSideBar, openDropdown, toggleMenu }: NavItemP
   );
 }
 
-export default NavItem
+export default NavItem;
