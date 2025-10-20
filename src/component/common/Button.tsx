@@ -4,7 +4,7 @@ import { cn } from "../../lib/utils";
 const colorClass: Record<string, string> = {
 
     primary: "bg-primary hover:bg-primary-hover text-white",
-    secondary: "bg-secondary hover:bg-secondary-hover text-gray-900",
+    secondary: "bg-secondary hover:bg-secondary-hover text-white",
     textOnly: "bg-transparent border-none text-gray-700 hover:text-red-500",
 };
 const sizeClass: Record<string, string> = {

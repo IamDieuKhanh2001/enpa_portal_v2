@@ -1,13 +1,13 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../../component/common/Card'
-import { TextBox } from '../../component/common/TextBox'
-import { cn } from '../../lib/utils'
-import { Button } from '../../component/common/Button'
-import { Table } from '../../component/common/Table'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../../../component/common/Card'
+import { TextBox } from '../../../component/common/TextBox'
+import { cn } from '../../../lib/utils'
+import { Button } from '../../../component/common/Button'
+import { Table } from '../../../component/common/Table'
 import { IconTrash } from '@tabler/icons-react'
-import SelectBox from '../../component/common/SelectBox'
+import SelectBox from '../../../component/common/SelectBox'
 import { FormikProvider, useFormik } from "formik";
 import * as Yup from 'yup';
 
