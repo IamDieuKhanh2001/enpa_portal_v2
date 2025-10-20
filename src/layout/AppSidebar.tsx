@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { cn } from "../lib/utils";
+import { cn } from "@/lib/utils";
 import NavItem from "./NavItem";
 import navItems from "./navItemList";
 import Link from "next/link";

@@ -1,21 +1,21 @@
 'use client'
 
 import Image from "next/image";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./component/common/Card";
-import { TextBox } from "./component/common/TextBox";
-import { Button } from "./component/common/Button";
-import { Alert } from "./component/common/Alert";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../component/common/Card";
+import { TextBox } from "../component/common/TextBox";
+import { Button } from "../component/common/Button";
+import { Alert } from "../component/common/Alert";
 import * as Yup from 'yup';
 import { Field, FormikProvider, useFormik } from "formik";
 import { toast } from "react-toastify";
-import { NumberBox } from "./component/common/NumberBox";
-import SelectBox from "./component/common/SelectBox";
+import { NumberBox } from "../component/common/NumberBox";
+import SelectBox from "../component/common/SelectBox";
 import { IconAdjustments, IconAdOff } from "@tabler/icons-react";
 import Link from "next/link";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./component/common/Tabs";
-import { Grid, GridCol, GridRow } from "./component/common/Grid";
-import { Table } from "./component/common/Table";
-import { Badge } from "./component/common/Badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../component/common/Tabs";
+import { Grid, GridCol, GridRow } from "../component/common/Grid";
+import { Table } from "../component/common/Table";
+import { Badge } from "../component/common/Badge";
 // import { ErrorMessage, Field, Form, Formik } from 'formik';
 
 export default function Home() {

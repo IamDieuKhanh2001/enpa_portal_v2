@@ -1,13 +1,13 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../component/common/Card'
-import { TextBox } from '../component/common/TextBox'
-import { cn } from '../lib/utils'
-import { Button } from '../component/common/Button'
-import { Table } from '../component/common/Table'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../../component/common/Card'
+import { TextBox } from '../../component/common/TextBox'
+import { cn } from '../../lib/utils'
+import { Button } from '../../component/common/Button'
+import { Table } from '../../component/common/Table'
 import { IconTrash } from '@tabler/icons-react'
-import SelectBox from '../component/common/SelectBox'
+import SelectBox from '../../component/common/SelectBox'
 import { FormikProvider, useFormik } from "formik";
 import * as Yup from 'yup';
 
@@ -71,6 +71,7 @@ const page = () => {
     }),
     onSubmit: async (values) => {
       console.log("Form submitted:", values);
+
     },
   });
 
@@ -93,6 +94,33 @@ const page = () => {
   const deleteNavigationRow = (id: number) => {
 
     setNavigationList((prev) => {
+      const filtered = prev.filter((r) => r.id !== id);
+      return filtered.map((r, index) => ({ ...r, id: index + 1 }));
+    });
+  };
+
+  const handleNavigationNameChange = (id: number, value: string) => {
+    setNavigationList((prevRows) =>
+      prevRows.map((r) =>
+        r.id === id
+          ? { ...r, name: value }
+          : r
+      )
+    );
+  };
+
+  const addIconMenuRow = () => {
+    let newRow: iconMenu = {
+      id: iconMenuList.length + 1,
+      img: "",
+      text: "",
+      url: "",
+    };
+    setIconMenuList((prev) => [...prev, newRow]);
+  };
+
+  const deleteIconMenuRow = (id: number) => {
+    setIconMenuList((prev) => {
       const filtered = prev.filter((r) => r.id !== id);
       return filtered.map((r, index) => ({ ...r, id: index + 1 }));
     });
@@ -181,6 +209,7 @@ const page = () => {
                     value={""}
                     placeholder="https://image.rakuten.co.jp/empoportal/empo.jpg"
                     direction="vertical"
+                    readOnly={true}
                   />
                   <Button size='sm' className='flex-shrink-0'>
                     削除
@@ -278,23 +307,65 @@ const page = () => {
                   </Table.Row>
                 </Table.Head>
                 <Table.Body>
-                  <Table.Row>
-                    <Table.InputCell />
-                    <Table.InputCell />
-                    <Table.InputCell />
-                    <Table.Td>
-                      <button className="text-sm bg-transparent border-none text-gray-700 hover:text-red-500">
-                        <IconTrash
-                          size={20}
-                          strokeWidth={0.5}
-                          color='black'
-                        />
-                      </button>
-                    </Table.Td>
-                  </Table.Row>
+                  {iconMenuList?.map((item, index) => (
+                    <Table.Row key={`iconMenu-${index}`}>
+                      <Table.InputCell
+                        value={item.img}
+                        onChange={(e) => {
+                          setIconMenuList((prevRows) =>
+                            prevRows.map((r) =>
+                              r.id === item.id
+                                ? { ...r, img: e.target.value }
+                                : r
+                            )
+                          )
+                        }}
+                      />
+                      <Table.InputCell
+                        value={item.url}
+                        onChange={(e) => {
+                          setIconMenuList((prevRows) =>
+                            prevRows.map((r) =>
+                              r.id === item.id
+                                ? { ...r, url: e.target.value }
+                                : r
+                            )
+                          )
+                        }}
+                      />
+                      <Table.InputCell
+                        value={item.text}
+                        onChange={(e) => {
+                          setIconMenuList((prevRows) =>
+                            prevRows.map((r) =>
+                              r.id === item.id
+                                ? { ...r, text: e.target.value }
+                                : r
+                            )
+                          )
+                        }}
+                      />
+                      <Table.Td>
+                        <button
+                          className="text-sm bg-transparent border-none text-gray-700 hover:text-red-500"
+                          onClick={() => deleteIconMenuRow(item.id)}
+                        >
+                          <IconTrash
+                            size={20}
+                            strokeWidth={0.5}
+                            color='black'
+                          />
+                        </button>
+                      </Table.Td>
+                    </Table.Row>
+                  ))}
                 </Table.Body>
               </Table.Container>
-              <Button>アイコンメニューを追加</Button>
+              <Button
+                onClick={() => addIconMenuRow()}
+              >
+                アイコンメニューを追加
+              </Button>
 
               <label
                 htmlFor={""}
@@ -384,6 +455,7 @@ const page = () => {
                 name=""
                 width="sm"
                 value={"2"}
+                readOnly={true}
                 options={[
                   { value: "", label: "choose" },
                   { value: "2", label: "2列" },
