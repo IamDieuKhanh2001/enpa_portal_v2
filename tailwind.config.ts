@@ -9,8 +9,10 @@ const config: Config = {
       colors: {
         primary: "#E6372E",
         "primary-hover": "#B91C1C",
-        secondary: "#F3F4F6",
-        "secondary-hover": "#E5E7EB",
+        secondary: "#3B82F6",
+        "secondary-hover": "#1D4ED8",
+        neutral: "#E5E7EB",
+        "neutral-hover": "#D5D1DB",
         background: "#FFFFFF",
         "background-subtle": "#F3F4F6",
       },
