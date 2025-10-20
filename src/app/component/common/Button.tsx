@@ -2,8 +2,10 @@ import React from "react";
 import { cn } from "../../lib/utils";
 
 const colorClass: Record<string, string> = {
-  primary: "bg-primary hover:bg-primary-hover text-white",
-  secondary: "bg-secondary hover:bg-secondary-hover text-gray-900",
+
+    primary: "bg-primary hover:bg-primary-hover text-white",
+    secondary: "bg-secondary hover:bg-secondary-hover text-gray-900",
+    textOnly: "bg-transparent border-none text-gray-700 hover:text-red-500",
 };
 const sizeClass: Record<string, string> = {
   sm: "px-3 py-1.5 text-sm",
@@ -11,8 +13,9 @@ const sizeClass: Record<string, string> = {
   lg: "px-6 py-2.5 text-base",
 };
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  color?: "primary" | "secondary";
-  size?: "sm" | "md" | "lg";
+
+    color?: "primary" | "secondary" | "textOnly",
+    size?: "sm" | "md" | "lg",
 }
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className = "", color = "primary", size = "md", ...props }, ref) => {

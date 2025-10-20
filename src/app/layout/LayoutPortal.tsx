@@ -17,7 +17,7 @@ export default function LayoutPortal(props: LayoutPortalProps) {
 
       {/* --- Main --- */}
       <main className="flex-1 overflow-y-auto p-4">
-        <div className="w-full max-w-7xl mx-auto">
+        <div className="w-full mx-auto">
           {children}
         </div>
       </main>
