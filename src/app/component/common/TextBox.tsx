@@ -16,10 +16,24 @@ interface TextBoxProps extends React.InputHTMLAttributes<HTMLInputElement> {
   width?: "sm" | "md" | "lg" | "full",
   value: string | number,
   direction?: "vertical" | "horizontal",
+  error?: string,
+  touched?: boolean,
 }
 const TextBox = React.forwardRef<HTMLInputElement, TextBoxProps>(
 
-  ({ label, isRequired = false, id, name, width = "full", value, direction = 'vertical', className = '', ...props }, ref) => {
+  ({
+    label,
+    isRequired = false,
+    id,
+    name,
+    width = "full",
+    value,
+    direction = 'vertical',
+    error = "",
+    touched = false,
+    className = '',
+    ...props
+  }, ref) => {
 
     return (
       <>
@@ -50,6 +64,9 @@ const TextBox = React.forwardRef<HTMLInputElement, TextBoxProps>(
             ref={ref}
             {...props}
           />
+          {touched && error && (
+            <p className="text-red-500 text-sm">{error}</p>
+          )}
         </div>
       </>
     );

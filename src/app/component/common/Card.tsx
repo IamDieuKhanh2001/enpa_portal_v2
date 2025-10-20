@@ -33,7 +33,7 @@ const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
         return (
             <div
                 ref={ref}
-                className={cn("flex flex-col space-y-1.5 p-6", className)}
+                className={cn("flex flex-col space-y-1.5 p-6 mb-3 border-b border-gray-200", className)}
                 {...props}
             >
                 {children}

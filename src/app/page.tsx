@@ -336,14 +336,14 @@ export default function Home() {
 
         </TabsContent>
         <TabsContent value="tab3">
-          <Table.Root>
+          <Table.Container>
             <Table.Head>
               <Table.Row>
                 <Table.Th width="w-16">#</Table.Th>
                 <Table.Th width="w-40">商品管理番号*</Table.Th>
                 <Table.Th width="w-48">代替商品画像URL</Table.Th>
                 <Table.Th width="w-32">識別用文字列</Table.Th>
-                <Table.Th width="w-16" center>削除</Table.Th>
+                <Table.Th width="w-16">削除</Table.Th>
               </Table.Row>
             </Table.Head>
             <Table.Body>
@@ -352,14 +352,33 @@ export default function Home() {
                 <Table.Td>AB123</Table.Td>
                 <Table.Td>https://example.com/image.png</Table.Td>
                 <Table.Td>id_string</Table.Td>
-                <Table.Td center>
+                <Table.Td>
                   <button className="text-red-500 hover:text-red-700">削除</button>
                 </Table.Td>
               </Table.Row>
               {/* More rows */}
             </Table.Body>
-          </Table.Root>
+          </Table.Container>
         </TabsContent>
+
+        <Table.Container>
+          <Table.Head>
+            <Table.Row>
+              <Table.Th>商品名</Table.Th>
+              <Table.Th>価格</Table.Th>
+            </Table.Row>
+          </Table.Head>
+
+          <Table.Body>
+            <Table.Row>
+              <Table.Td position="left">りんご</Table.Td>
+              <Table.InputCell
+    
+              />
+            </Table.Row>
+          </Table.Body>
+        </Table.Container>
+
       </Tabs>
 
 
