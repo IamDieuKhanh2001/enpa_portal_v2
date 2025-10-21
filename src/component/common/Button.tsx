@@ -3,9 +3,9 @@ import { cn } from "../../lib/utils";
 
 const colorClass: Record<string, string> = {
 
-    primary: "bg-primary hover:bg-primary-hover text-white",
-    secondary: "bg-secondary hover:bg-secondary-hover text-white",
-    textOnly: "bg-transparent border-none text-gray-700 hover:text-red-500",
+  primary: "bg-primary hover:bg-primary-hover text-white disabled:bg-primary-disabled disabled:cursor-not-allowed",
+  secondary: "bg-secondary hover:bg-secondary-hover text-white disabled:bg-secondary-disabled disabled:cursor-not-allowed",
+  textOnly: "bg-transparent border-none text-gray-700 hover:text-red-500 disabled:text-gray-400 disabled:cursor-not-allowed",
 };
 const sizeClass: Record<string, string> = {
   sm: "px-3 py-1.5 text-sm",

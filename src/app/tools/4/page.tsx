@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../../../component/common/Card'
 import { TextBox } from '../../../component/common/TextBox'
 import { cn } from '../../../lib/utils'
@@ -10,6 +10,7 @@ import { IconTrash } from '@tabler/icons-react'
 import SelectBox from '../../../component/common/SelectBox'
 import { FormikProvider, FormikValues, useFormik } from "formik";
 import * as Yup from 'yup';
+import Label from '@/component/common/Label'
 
 type navigationMenu = {
   id: number,
@@ -72,10 +73,50 @@ const page = () => {
       url: "https://item.rakuten.co.jp/kenkoukazoku/6933/",
     },
   ]);
-  const [suggestKeywordList, setSuggestKeywordList] = useState<suggestKeyword[]>([]);
-  const [slideList, setSlideList] = useState<slide[]>([]);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-
+  const [suggestKeywordList, setSuggestKeywordList] = useState<suggestKeyword[]>([
+    {
+      id: 1,
+      keyword: "",
+      url: "",
+    },
+    {
+      id: 2,
+      keyword: "フィギュア",
+      url: "https://search.rakuten.co.jp/search/mall/%E3%83%95%E3%82%A3%E3%82%AE%E3%83%A5%E3%82%A2+%E6%A3%9A/?l-id=pc_header_search_suggest",
+    },
+    {
+      id: 3,
+      keyword: "カレー",
+      url: "https://search.rakuten.co.jp/search/mall/%E3%82%AB%E3%83%AC%E3%83%BC/?l-id=pc_header_search_suggest",
+    },
+  ]);
+  const [slideList, setSlideList] = useState<slide[]>([
+    {
+      id: 1,
+      slideImg: "",
+      url: "",
+    },
+    {
+      id: 2,
+      slideImg: "https://r.r10s.jp/com/img/EMP/202510/a875956f-0ea8-45ae-9303-f602660445fa-20251001_toshikoshi_bn1_3_top_big_1890x300_v2.jpg",
+      url: "https://event.rakuten.co.jp/toshikoshi/?l-id=top_normal_bigbnr_pc_HEBCJJJA_157737_0",
+    },
+    {
+      id: 3,
+      slideImg: "https://r.r10s.jp/com/img/EMP/202510/d555a7b9-affa-4389-9edc-9edbb7fe1629-bigbanner_1890_300_ALL_logo_02-color-04.jpg",
+      url: "https://brandavenue.rakuten.co.jp/contents/coupon/?l-id=top_normal_bigbnr_pc_HGHHEEZH_157543_0",
+    },
+    {
+      id: 4,
+      slideImg: "https://r.r10s.jp/com/img/EMP/202510/94f29082-3246-49dd-bd2d-dcbd650fd627-dailypoint5_02_1890x300.jpg",
+      url: "",
+    },
+    {
+      id: 5,
+      slideImg: "https://r.r10s.jp/com/img/EMP/202510/3d338ab0-1a37-4cc9-aaa2-591bd0e51c1e-20250919_awlife_bn1_1_top_big_1890x300.jpg",
+      url: "",
+    },
+  ]);
 
   const selectColorList = [
     "#3B82F6", // blue
@@ -92,13 +133,22 @@ const page = () => {
       topMessage: "３０００円最上部メッセージ",
       storeLogoUrl: "https://web20.empowerment-town.com/static/img/emportal_logo.png",
       hexColor: "#0e3600",
-      awardUrl1: "",
-      awardUrl2: "",
+      awards: [""],
+      layoutColumn: "2",
     },
     validationSchema: Yup.object({
-      topMessage: Yup.string().required("最上部メッセージを入力してください。"),
-      storeLogoUrl: Yup.string().required("店舗ロゴURLを入力してください。"),
-      hexColor: Yup.string().required("メインカラーを選択してください。"),
+      topMessage: Yup.string().trim().required("最上部メッセージを入力してください。"),
+      storeLogoUrl: Yup.string().trim().required("店舗ロゴURLを入力してください。"),
+      hexColor: Yup.string().trim().required("メインカラーを選択してください。"),
+      layoutColumn: Yup.string().trim().required("レイアウトカラムを選択してください。"),
+      awards: Yup.array()
+        .of(
+          Yup.string()
+            .required("受賞を記入してください。")
+            .trim()
+            .min(1, "必須") // không được để trống
+        )
+        .min(1, "少なくとも1つ必要です") // ít nhất 1 phần tử trong mảng
     }),
     onSubmit: async (values) => {
       console.log("Form submitted:", values);
@@ -116,6 +166,13 @@ const page = () => {
 
   const editHtmlContent = (templateHtml: string, values: any) => {
 
+    // 3️⃣ Thêm <base href> để trình duyệt hiểu đường dẫn tương đối
+    // 👉 Chèn ngay sau <head>
+    templateHtml = templateHtml.replace(
+      /<head[^>]*>/i,
+      `<head><base href="${window.location.origin}/template_html/tools/4/">`
+    );
+
     templateHtml = templateHtml.replace("{{PAGE_TITLE}}", "PC用ヘッダー作成");
     templateHtml = templateHtml.replace("{{MAIN_COLOR}}", `style="background-color:${values.hexColor};"`);
     templateHtml = templateHtml.replace("{{TOP_MSG}}", `${values.topMessage}`);
@@ -131,6 +188,7 @@ const page = () => {
     // 店舗ロゴURL
     templateHtml = templateHtml.replace("{{STORE_LOGO_URL}}", `${values.storeLogoUrl}`);
 
+    // アイコン付きメニュー
     let iconMenuHtml = "";
     let iconMenuFilteredList = iconMenuList.filter(item => !(item.img === "" && item.url === "" && item.text === "")) // bỏ item toàn rỗng
     for (let i = 0; i < iconMenuFilteredList.length; i += 5) {
@@ -154,12 +212,33 @@ const page = () => {
     }
     templateHtml = templateHtml.replace("{{ICON_MENU}}", iconMenuHtml);
 
-    // 3️⃣ Thêm <base href> để trình duyệt hiểu đường dẫn tương đối
-    // 👉 Chèn ngay sau <head>
-    templateHtml = templateHtml.replace(
-      /<head[^>]*>/i,
-      `<head><base href="${window.location.origin}/template_html/tools/4/">`
-    );
+    // 注目キーワード
+    let suggestKeywordHtml = suggestKeywordList
+      .filter(item => !(item.keyword === "" && item.url === "")) // bỏ item toàn rỗng
+      .map(item => `
+          <a
+            href=${item.url}>
+              <p>#${item.keyword}</p>
+          </a>
+        `)
+      .join("\n");
+    templateHtml = templateHtml.replace("{{SUGGEST_KEYWORD}}", suggestKeywordHtml);
+
+    // スライドバナー
+    let slideHtml = slideList
+      .filter(item => !(item.slideImg === "" && item.url === "")) // bỏ item toàn rỗng
+      .map(item => `
+          <div class="slider-img">
+
+              <a href=${item.url}>
+                  <img src=${item.slideImg} alt="バナー">
+              </a>
+
+          </div>
+        `)
+      .join("\n");
+    templateHtml = templateHtml.replace("{{SLIDE}}", slideHtml);
+
     return templateHtml;
   }
 
@@ -214,9 +293,60 @@ const page = () => {
     });
   };
 
+  const addSuggestKeywordRow = () => {
+    let newRow: suggestKeyword = {
+      id: suggestKeywordList.length + 1,
+      keyword: "",
+      url: "",
+    };
+    setSuggestKeywordList((prev) => [...prev, newRow]);
+  };
+
+  const deleteSuggestKeywordRow = (id: number) => {
+    setSuggestKeywordList((prev) => {
+      const filtered = prev.filter((r) => r.id !== id);
+      return filtered.map((r, index) => ({ ...r, id: index + 1 }));
+    });
+  };
+
+  const addSlideRow = () => {
+    let newRow: slide = {
+      id: slideList.length + 1,
+      slideImg: "",
+      url: "",
+    };
+    setSlideList((prev) => [...prev, newRow]);
+  };
+
+  const deleteSlideRow = (id: number) => {
+    setSlideList((prev) => {
+      const filtered = prev.filter((r) => r.id !== id);
+      return filtered.map((r, index) => ({ ...r, id: index + 1 }));
+    });
+  };
+
+  const createInputAwardImg = () => {
+    if (formik.values.awards.length >= 3) {
+      console.log(formik.values.awards.length)
+      return;
+    }
+    formik.setFieldValue("awards", [...formik.values.awards, ""])
+
+  }
+
+  const deleteInputAwardImg = (index: number) => {
+
+    const newAwards = [...formik.values.awards];
+    if (newAwards.length === 1) {
+      return
+    }
+    newAwards.splice(index, 1); // xóa phần tử index
+    formik.setFieldValue("awards", newAwards);
+  }
+
   useEffect(() => {
-    console.log(navigationList)
-  }, [navigationList])
+    console.log(formik.values)
+  }, [formik])
 
   return (
     <>
@@ -228,6 +358,7 @@ const page = () => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                {/* 基本設定 Col 1  */}
                 <div>
                   <TextBox
                     id="topMessage"
@@ -255,13 +386,21 @@ const page = () => {
                     error={formik.errors.storeLogoUrl}
                     touched={formik.touched.storeLogoUrl}
                   />
-                  <label
-                    htmlFor={""}
-                    className={cn(
-                      'block text-sm font-medium text-gray-800 mb-1',
-                    )}>
+                  <Label htmlFor='hexColor'>
                     メインカラー
-                  </label>
+                  </Label>
+                  <input
+                    id={"hexColor"}
+                    name={"hexColor"}
+                    type='color'
+                    value={formik.values.hexColor}
+                    className={cn(
+                      "h-10 w-32 rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm mb-2",
+                      "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 focus:border-red-500",
+                      "disabled:cursor-not-allowed disabled:bg-gray-100",
+                    )}
+                    onChange={formik.handleChange}
+                  />
                   <div className="flex items-center space-x-2 mb-3">
                     {selectColorList?.map((color, index) => (
                       <div key={index} className="w-8 h-8 rounded-full cursor-pointer shadow-md"
@@ -270,39 +409,49 @@ const page = () => {
                       />
                     ))}
                   </div>
-                  <input
-                    id={"hexColor"}
-                    name={"hexColor"}
-                    type='color'
-                    value={formik.values.hexColor}
-                    className={cn(
-                      "h-10 w-32 rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm",
-                      "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 focus:border-red-500",
-                      "disabled:cursor-not-allowed disabled:bg-gray-100",
-                    )}
-                    onChange={formik.handleChange}
-                  />
                   <span className="font-mono">HEX: {formik.values.hexColor}</span>
                   {formik.touched.hexColor && formik.errors.hexColor && (
                     <p className="text-red-500 text-sm">{formik.errors.hexColor}</p>
                   )}
                 </div>
+                {/* 基本設定 Col 2  */}
                 <div>
-                  <TextBox
-                    id=""
-                    name=""
-                    type="text"
-                    isRequired={true}
-                    label={"ロゴURL 1"}
-                    value={""}
-                    placeholder="https://image.rakuten.co.jp/empoportal/empo.jpg"
-                    direction="vertical"
-                    readOnly={true}
-                  />
-                  <Button size='sm' className='flex-shrink-0'>
-                    削除
-                  </Button>
-                  <Button size='sm' color='secondary' className='mx-2'>
+                  {formik.values.awards?.map((url, index) => (
+                    <TextBox
+                      key={index}
+                      id={`award-${index}`}
+                      name={`awards[${index}]`}
+                      label={`受賞ロゴ ${index + 1}`}
+                      type="text"
+                      isRequired={true}
+                      value={url}
+                      onChange={formik.handleChange}
+                      width='lg'
+                      className='flex-1'
+                      placeholder="https://image.rakuten.co.jp/empoportal/empo.jpg"
+                      direction="vertical"
+                      suffix={
+                        <Button
+                          size='sm'
+                          color='textOnly'
+                          disabled={formik.values.awards.length === 1 ? true : false}
+                          onClick={() => deleteInputAwardImg(index)}
+                        >
+                          削除
+                        </Button>
+                      }
+                      error={Array.isArray(formik.errors.awards) ? formik.errors.awards[index] : undefined}
+                      touched={Array.isArray(formik.touched.awards) ? formik.touched.awards[index] : false}
+                    />
+                  ))}
+
+                  <Button
+                    size='sm'
+                    color='secondary'
+                    className='mx-2'
+                    disabled={formik.values.awards.length >= 3 ? true : false}
+                    onClick={() => createInputAwardImg()}
+                  >
                     受賞ロゴを追加
                   </Button>
                 </div>
@@ -463,20 +612,44 @@ const page = () => {
                 </Table.Head>
 
                 <Table.Body>
-                  <Table.Row>
-                    <Table.InputCell />
-                    <Table.InputCell />
-                    <Table.Button>
-                      <IconTrash
-                        size={20}
-                        strokeWidth={0.5}
-                        color='black'
+                  {suggestKeywordList?.map((item, index) => (
+                    <Table.Row key={`keyword-${index}`}>
+                      <Table.InputCell
+                        value={item.keyword}
+                        onChange={(e) => {
+                          setSuggestKeywordList((prevRows) =>
+                            prevRows.map((r) =>
+                              r.id === item.id
+                                ? { ...r, keyword: e.target.value }
+                                : r
+                            )
+                          )
+                        }}
                       />
-                    </Table.Button>
-                  </Table.Row>
+                      <Table.InputCell
+                        value={item.url}
+                        onChange={(e) => {
+                          setSuggestKeywordList((prevRows) =>
+                            prevRows.map((r) =>
+                              r.id === item.id
+                                ? { ...r, url: e.target.value }
+                                : r
+                            )
+                          )
+                        }}
+                      />
+                      <Table.Button onClick={() => deleteSuggestKeywordRow(item.id)}>
+                        <IconTrash
+                          size={20}
+                          strokeWidth={0.5}
+                          color='black'
+                        />
+                      </Table.Button>
+                    </Table.Row>
+                  ))}
                 </Table.Body>
               </Table.Container>
-              <Button>キーワードを追加</Button>
+              <Button onClick={() => addSuggestKeywordRow()}>キーワードを追加</Button>
             </CardContent>
           </Card>
 
@@ -500,43 +673,69 @@ const page = () => {
                     <Table.Th>削除</Table.Th>
                   </Table.Row>
                 </Table.Head>
-
                 <Table.Body>
-                  <Table.Row>
-                    <Table.InputCell />
-                    <Table.InputCell />
-                    <Table.Button>
-                      <IconTrash
-                        size={20}
-                        strokeWidth={0.5}
-                        color='black'
+                  {slideList?.map((item, index) => (
+                    <Table.Row key={`slide-${index}`}>
+                      <Table.InputCell
+                        value={item.slideImg}
+                        onChange={(e) => {
+                          setSlideList((prevRows) =>
+                            prevRows.map((r) =>
+                              r.id === item.id
+                                ? { ...r, slideImg: e.target.value }
+                                : r
+                            )
+                          )
+                        }}
                       />
-                    </Table.Button>
-                  </Table.Row>
+                      <Table.InputCell
+                        value={item.url}
+                        onChange={(e) => {
+                          setSlideList((prevRows) =>
+                            prevRows.map((r) =>
+                              r.id === item.id
+                                ? { ...r, url: e.target.value }
+                                : r
+                            )
+                          )
+                        }}
+                      />
+                      <Table.Button onClick={() => deleteSlideRow(item.id)}>
+                        <IconTrash
+                          size={20}
+                          strokeWidth={0.5}
+                          color='black'
+                        />
+                      </Table.Button>
+                    </Table.Row>
+                  ))}
                 </Table.Body>
               </Table.Container>
-              <Button>スライドを追加</Button>
+              <Button onClick={() => addSlideRow()}>スライドを追加</Button>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              特集設定
+              <CardTitle>4. 特集設定</CardTitle>
             </CardHeader>
             <CardContent>
               <SelectBox
-                id=""
-                label="レイアウト選択"
-                name=""
+                id="layoutColumn"
+                name="layoutColumn"
                 width="sm"
-                value={"2"}
+                label="レイアウト選択"
+                value={formik.values.layoutColumn}
                 readOnly={true}
                 options={[
-                  { value: "", label: "choose" },
+                  { value: "", label: "選択" },
                   { value: "2", label: "2列" },
                   { value: "3", label: "3列" },
                   { value: "4", label: "4列" },
                 ]}
+                onChange={formik.handleChange}
+                error={formik.errors.layoutColumn}
+                touched={formik.touched.layoutColumn}
                 isRequired={true}
               />
 

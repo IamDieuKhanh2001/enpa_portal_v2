@@ -15,9 +15,22 @@ interface SelectBoxProps extends React.InputHTMLAttributes<HTMLSelectElement> {
     isRequired?: boolean;
     width?: "sm" | "md" | "lg" | "full",
     direction?: "vertical" | "horizontal";
+    error?: string,
+    touched?: boolean,
 }
 const SelectBox = React.forwardRef<HTMLSelectElement, SelectBoxProps>(
-    ({ label, id, options, isRequired = false, width = "md", direction = "vertical", className = "", ...props }, ref) => {
+    ({
+        label,
+        id,
+        options,
+        isRequired = false,
+        width = "md",
+        direction = "vertical",
+        error = "",
+        touched = false,
+        className = "",
+        ...props
+    }, ref) => {
         return (
             <div
                 className={cn(
@@ -53,6 +66,9 @@ const SelectBox = React.forwardRef<HTMLSelectElement, SelectBoxProps>(
                         </option>
                     ))}
                 </select>
+                {touched && error && (
+                    <p className="text-red-500 text-sm">{error}</p>
+                )}
             </div>
         );
     }

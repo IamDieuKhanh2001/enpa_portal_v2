@@ -15,6 +15,8 @@ const config: Config = {
         "neutral-hover": "#D5D1DB",
         background: "#FFFFFF",
         "background-subtle": "#F3F4F6",
+        "primary-disabled": "#FCA5A5",
+        "secondary-disabled": "#93C5FD",
       },
       text: {
         base: "#1F2937",
