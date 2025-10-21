@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from '../../lib/utils';
+import { IconTrash } from "@tabler/icons-react";
 
 // ==================== Container ====================
 const TableContainer = React.forwardRef<
@@ -77,7 +78,6 @@ const TableCell: React.FC<TableCellProps> = ({ children, position = "center", cl
 
 // ==================== InputCell ====================
 interface TableInputCellProps extends React.InputHTMLAttributes<HTMLInputElement> {
-
 }
 const TableInputCell: React.FC<TableInputCellProps> = ({ className, ...props }) => (
 
@@ -92,6 +92,26 @@ const TableInputCell: React.FC<TableInputCellProps> = ({ className, ...props }) 
   </td>
 );
 
+// ==================== ButtonCell ====================
+interface TableActionButtonCellProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children: React.ReactNode
+}
+const TableActionButtonCell: React.FC<TableActionButtonCellProps> = ({ className, children, type = 'button', ...props }) => (
+
+  <td className="border text-center">
+    <button
+      type={type}
+      {...props}
+      className={cn(
+        "text-sm bg-transparent border-none text-gray-700 hover:text-red-500",
+        className,
+      )}
+    >
+      {children}
+    </button>
+  </td>
+);
+
 // ==================== Export ====================
 export const Table = {
   Container: TableContainer,
@@ -101,4 +121,5 @@ export const Table = {
   Th: TableHeadCell,
   Td: TableCell,
   InputCell: TableInputCell,
+  Button: TableActionButtonCell,
 };

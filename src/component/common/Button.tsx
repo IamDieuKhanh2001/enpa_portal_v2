@@ -18,10 +18,11 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     size?: "sm" | "md" | "lg",
 }
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className = "", color = "primary", size = "md", ...props }, ref) => {
+  ({ className = "", type = "button", color = "primary", size = "md", ...props }, ref) => {
     return (
       <button
         ref={ref}
+        type="button"
         className={cn(
           "rounded-md",
           sizeClass[size],
