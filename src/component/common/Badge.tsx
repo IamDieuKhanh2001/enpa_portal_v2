@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "../../lib/utils"; 
+import { cn } from "../../lib/utils";
 
 type ColorClass =
   | "primary"
@@ -13,16 +13,16 @@ const colorClass: Record<ColorClass, string> = {
   success: "bg-green-600 text-white",
   warning: "bg-yellow-500 text-white",
 };
-
+interface BadgeProps {
+  color?: ColorClass;
+  children: React.ReactNode;
+  className?: string;
+}
 const Badge = ({
   color = "primary",
   children,
   className,
-}: {
-  color?: ColorClass;
-  children: React.ReactNode;
-  className?: string;
-}) => (
+}: BadgeProps) => (
   <span
     className={cn(
       "inline-block text-xs font-medium px-2.5 py-1 rounded",
