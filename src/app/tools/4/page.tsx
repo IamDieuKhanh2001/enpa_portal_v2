@@ -132,7 +132,7 @@ const page = () => {
       // 1.基本設定
       topMessage: "３０００円最上部メッセージ",
       storeLogoUrl: "https://web20.empowerment-town.com/static/img/emportal_logo.png",
-      hexColor: "#0e3600",
+      hexColor: "#3B82F6",
       awards: [""],
       layoutColumn: "2",
     },
@@ -152,7 +152,6 @@ const page = () => {
     }),
     onSubmit: async (values) => {
       console.log("Form submitted:", values);
-
 
       // Lấy template HTML
       const responseHtml = await fetch("/template_html/tools/4/header.html");
@@ -187,6 +186,15 @@ const page = () => {
 
     // 店舗ロゴURL
     templateHtml = templateHtml.replace("{{STORE_LOGO_URL}}", `${values.storeLogoUrl}`);
+
+    // 受賞ロゴ
+    let awardIconHtml = "";
+    values.awards?.map((awardUrl: string) => {
+      awardIconHtml += `
+        <img src=${awardUrl} alt="award">
+      `
+    })
+    templateHtml = templateHtml.replace("{{IMG_AWARD}}", awardIconHtml);
 
     // アイコン付きメニュー
     let iconMenuHtml = "";
@@ -238,6 +246,8 @@ const page = () => {
         `)
       .join("\n");
     templateHtml = templateHtml.replace("{{SLIDE}}", slideHtml);
+
+
 
     return templateHtml;
   }
@@ -448,7 +458,6 @@ const page = () => {
                   <Button
                     size='sm'
                     color='secondary'
-                    className='mx-2'
                     disabled={formik.values.awards.length >= 3 ? true : false}
                     onClick={() => createInputAwardImg()}
                   >
@@ -519,7 +528,10 @@ const page = () => {
                 </Table.Body>
               </Table.Container>
               <Button
-                onClick={() => addNavigationRow()}>
+                color='secondary'
+                size='sm'
+                onClick={() => addNavigationRow()}
+              >
                 ナビゲーションを追加
               </Button>
 
@@ -590,6 +602,8 @@ const page = () => {
                 </Table.Body>
               </Table.Container>
               <Button
+                color='secondary'
+                size='sm'
                 onClick={() => addIconMenuRow()}
               >
                 アイコンメニューを追加
@@ -649,7 +663,13 @@ const page = () => {
                   ))}
                 </Table.Body>
               </Table.Container>
-              <Button onClick={() => addSuggestKeywordRow()}>キーワードを追加</Button>
+              <Button
+                color='secondary'
+                size='sm'
+                onClick={() => addSuggestKeywordRow()}
+              >
+                キーワードを追加
+              </Button>
             </CardContent>
           </Card>
 
@@ -711,7 +731,13 @@ const page = () => {
                   ))}
                 </Table.Body>
               </Table.Container>
-              <Button onClick={() => addSlideRow()}>スライドを追加</Button>
+              <Button
+                color='secondary'
+                size='sm'
+                onClick={() => addSlideRow()}
+              >
+                スライドを追加
+              </Button>
             </CardContent>
           </Card>
 
@@ -751,7 +777,10 @@ const page = () => {
                 <Table.Body>
                   <Table.Row>
                     <Table.InputCell />
-                    <Table.InputCell />
+                    <Table.SelectBox>
+                      <Table.Option value={"1"}>aaaa</Table.Option>
+                      <Table.Option value={"2"}>bbbb</Table.Option>
+                    </Table.SelectBox>
                     <Table.Button>
                       <IconTrash
                         size={20}
@@ -762,7 +791,12 @@ const page = () => {
                   </Table.Row>
                 </Table.Body>
               </Table.Container>
-              <Button>項目を追加</Button>
+              <Button
+                size='sm'
+                color='secondary'
+              >
+                項目を追加
+              </Button>
             </CardContent>
           </Card>
           <div className='flex justify-center'>

@@ -20,7 +20,7 @@ const TableHead: React.FC<React.HTMLAttributes<HTMLTableSectionElement>> = ({
   className,
   ...props
 }) => (
-  <thead className={cn("", className)} {...props}>
+  <thead className={cn("h-10", className)} {...props}>
     {children}
   </thead>
 );
@@ -85,11 +85,49 @@ const TableInputCell: React.FC<TableInputCellProps> = ({ className, ...props }) 
     <input
       {...props}
       className={cn(
-        "w-full h-full bg-transparent px-2 py-2 text-sm text-black placeholder-gray-400",
-        "focus:outline focus:outline-2 focus:outline-[#e6372e]"
+        "w-full h-10 bg-transparent px-2 py-2 text-sm text-black placeholder-gray-400",
+        "focus:outline focus:outline-2 focus:outline-[#e6372e]",
+        className,
       )}
     />
   </td>
+);
+
+// ==================== TableSelect ====================
+interface TableSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+    children: React.ReactElement<typeof TableSelectOption> | React.ReactElement<typeof TableSelectOption>[]; 
+}
+const TableSelect: React.FC<TableSelectProps> = ({ className, children, ...props }) => (
+
+  <td className="border text-center">
+    <select
+      {...props}
+      className={cn(
+        "w-full h-10 bg-transparent px-2 py-2 text-sm text-black placeholder-gray-400",
+        "focus:outline focus:outline-2 focus:outline-[#e6372e]",
+        className,
+      )}
+    >
+      {children}
+    </select>
+  </td>
+);
+
+// ==================== TableSelectOption ====================
+interface TableSelectOptionProps extends React.OptionHTMLAttributes<HTMLOptionElement> {
+  children: React.ReactNode,
+}
+const TableSelectOption: React.FC<TableSelectOptionProps> = ({ className, children, ...props }) => (
+
+  <option
+    {...props}
+    className={cn(
+      "",
+      className,
+    )}
+  >
+    {children}
+  </option>
 );
 
 // ==================== ButtonCell ====================
@@ -121,5 +159,7 @@ export const Table = {
   Th: TableHeadCell,
   Td: TableCell,
   InputCell: TableInputCell,
+  SelectBox: TableSelect,
+  Option: TableSelectOption,
   Button: TableActionButtonCell,
 };
