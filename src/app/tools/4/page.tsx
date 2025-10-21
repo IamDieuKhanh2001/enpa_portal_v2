@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../../../component/common/Card'
 import { TextBox } from '../../../component/common/TextBox'
 import { cn } from '../../../lib/utils'
@@ -8,7 +8,7 @@ import { Button } from '../../../component/common/Button'
 import { Table } from '../../../component/common/Table'
 import { IconTrash } from '@tabler/icons-react'
 import SelectBox from '../../../component/common/SelectBox'
-import { FormikProvider, useFormik } from "formik";
+import { FormikProvider, FormikValues, useFormik } from "formik";
 import * as Yup from 'yup';
 
 type navigationMenu = {
@@ -41,10 +41,41 @@ const page = () => {
       name: "",
       url: "",
     },
+    {
+      id: 2,
+      name: "Home",
+      url: "https://web20.empowerment-town.com/storejob_set/",
+    },
+    {
+      id: 3,
+      name: "Help",
+      url: "https://mail.google.com/chat/u/0/#chat/home",
+    },
   ]);
-  const [iconMenuList, setIconMenuList] = useState<iconMenu[]>([]);
+  const [iconMenuList, setIconMenuList] = useState<iconMenu[]>([
+    {
+      id: 1,
+      img: "",
+      text: "",
+      url: "",
+    },
+    {
+      id: 2,
+      img: "https://tshop.r10s.jp/ricetanaka/cabinet/imgrc0106013990.jpg?fitin=100:100",
+      text: "令和3年産 備蓄米 米 ",
+      url: "https://item.rakuten.co.jp/ricetanaka/r-0000/?s-id=top_normal_rk_hashist",
+    },
+    {
+      id: 3,
+      img: "https://ias.r10s.jp/dst/ec/162381/23585571/1-1-1/d91a13ed7386113e8ee8f52bf9494d4b.png",
+      text: "【3袋セット】元気あふれる毎日をサポート",
+      url: "https://item.rakuten.co.jp/kenkoukazoku/6933/",
+    },
+  ]);
   const [suggestKeywordList, setSuggestKeywordList] = useState<suggestKeyword[]>([]);
   const [slideList, setSlideList] = useState<slide[]>([]);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
 
   const selectColorList = [
     "#3B82F6", // blue
@@ -58,8 +89,8 @@ const page = () => {
   const formik = useFormik({
     initialValues: {
       // 1.基本設定
-      topMessage: "",
-      storeLogoUrl: "",
+      topMessage: "３０００円最上部メッセージ",
+      storeLogoUrl: "https://web20.empowerment-town.com/static/img/emportal_logo.png",
       hexColor: "#0e3600",
       awardUrl1: "",
       awardUrl2: "",
@@ -72,8 +103,75 @@ const page = () => {
     onSubmit: async (values) => {
       console.log("Form submitted:", values);
 
+
+      // Lấy template HTML
+      const responseHtml = await fetch("/template_html/tools/4/header.html");
+      let templateHtml = await responseHtml.text();
+
+      templateHtml = editHtmlContent(templateHtml, values)
+
+      reviewLivePage(templateHtml);
     },
   });
+
+  const editHtmlContent = (templateHtml: string, values: any) => {
+
+    templateHtml = templateHtml.replace("{{PAGE_TITLE}}", "PC用ヘッダー作成");
+    templateHtml = templateHtml.replace("{{MAIN_COLOR}}", `style="background-color:${values.hexColor};"`);
+    templateHtml = templateHtml.replace("{{TOP_MSG}}", `${values.topMessage}`);
+
+    // ナビゲーションメニュー
+    let navigationHtml = navigationList
+      .filter(item => !(item.name === "" && item.url === "")) // bỏ item toàn rỗng
+      .map(item => `<li><a href="${item.url}">${item.name}</a></li>`)
+      .join("\n");
+
+    templateHtml = templateHtml.replace("{{NAVIGATION_MENU}}", navigationHtml);
+
+    // 店舗ロゴURL
+    templateHtml = templateHtml.replace("{{STORE_LOGO_URL}}", `${values.storeLogoUrl}`);
+
+    let iconMenuHtml = "";
+    let iconMenuFilteredList = iconMenuList.filter(item => !(item.img === "" && item.url === "" && item.text === "")) // bỏ item toàn rỗng
+    for (let i = 0; i < iconMenuFilteredList.length; i += 5) {
+      // lấy 5 item 1 nhóm gom vào <div class="icons-row">{{5 item}}</div>
+      const group = iconMenuFilteredList.slice(i, i + 5);
+
+      iconMenuHtml += `<div class="icons-row">\n`;
+
+      group.forEach(item => {
+        iconMenuHtml += `
+          <a href=${item.url}>
+            <div class="icon-cell">
+              <img src="${item.img}" alt="${item.text}">
+              <p>${item.text}</p>
+            </div>
+          </a>
+        `;
+      });
+
+      iconMenuHtml += `</div>\n`;
+    }
+    templateHtml = templateHtml.replace("{{ICON_MENU}}", iconMenuHtml);
+
+    // 3️⃣ Thêm <base href> để trình duyệt hiểu đường dẫn tương đối
+    // 👉 Chèn ngay sau <head>
+    templateHtml = templateHtml.replace(
+      /<head[^>]*>/i,
+      `<head><base href="${window.location.origin}/template_html/tools/4/">`
+    );
+    return templateHtml;
+  }
+
+  const reviewLivePage = (templateHtml: string) => {
+
+    // 4️⃣ Tạo Blob để mở trong tab mới
+    const blob = new Blob([templateHtml], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+
+    // 5️⃣ Mở tab preview
+    window.open(url, "_blank");
+  }
 
   const selectColor = (color: string) => {
 
@@ -97,16 +195,6 @@ const page = () => {
       const filtered = prev.filter((r) => r.id !== id);
       return filtered.map((r, index) => ({ ...r, id: index + 1 }));
     });
-  };
-
-  const handleNavigationNameChange = (id: number, value: string) => {
-    setNavigationList((prevRows) =>
-      prevRows.map((r) =>
-        r.id === id
-          ? { ...r, name: value }
-          : r
-      )
-    );
   };
 
   const addIconMenuRow = () => {
@@ -270,17 +358,13 @@ const page = () => {
                           )
                         }}
                       />
-                      <Table.Td>
-                        <button
-                          className="text-sm bg-transparent border-none text-gray-700 hover:text-red-500"
-                          onClick={() => deleteNavigationRow(item.id)}>
-                          <IconTrash
-                            size={20}
-                            strokeWidth={0.5}
-                            color='black'
-                          />
-                        </button>
-                      </Table.Td>
+                      <Table.Button onClick={() => deleteNavigationRow(item.id)}>
+                        <IconTrash
+                          size={20}
+                          strokeWidth={0.5}
+                          color='black'
+                        />
+                      </Table.Button>
                     </Table.Row>
                   ))}
                 </Table.Body>
@@ -345,18 +429,13 @@ const page = () => {
                           )
                         }}
                       />
-                      <Table.Td>
-                        <button
-                          className="text-sm bg-transparent border-none text-gray-700 hover:text-red-500"
-                          onClick={() => deleteIconMenuRow(item.id)}
-                        >
-                          <IconTrash
-                            size={20}
-                            strokeWidth={0.5}
-                            color='black'
-                          />
-                        </button>
-                      </Table.Td>
+                      <Table.Button onClick={() => deleteIconMenuRow(item.id)}>
+                        <IconTrash
+                          size={20}
+                          strokeWidth={0.5}
+                          color='black'
+                        />
+                      </Table.Button>
                     </Table.Row>
                   ))}
                 </Table.Body>
@@ -387,15 +466,13 @@ const page = () => {
                   <Table.Row>
                     <Table.InputCell />
                     <Table.InputCell />
-                    <Table.Td>
-                      <button className="text-sm bg-transparent border-none text-gray-700 hover:text-red-500">
-                        <IconTrash
-                          size={20}
-                          strokeWidth={0.5}
-                          color='black'
-                        />
-                      </button>
-                    </Table.Td>
+                    <Table.Button>
+                      <IconTrash
+                        size={20}
+                        strokeWidth={0.5}
+                        color='black'
+                      />
+                    </Table.Button>
                   </Table.Row>
                 </Table.Body>
               </Table.Container>
@@ -428,15 +505,13 @@ const page = () => {
                   <Table.Row>
                     <Table.InputCell />
                     <Table.InputCell />
-                    <Table.Td>
-                      <button className="text-sm bg-transparent border-none text-gray-700 hover:text-red-500">
-                        <IconTrash
-                          size={20}
-                          strokeWidth={0.5}
-                          color='black'
-                        />
-                      </button>
-                    </Table.Td>
+                    <Table.Button>
+                      <IconTrash
+                        size={20}
+                        strokeWidth={0.5}
+                        color='black'
+                      />
+                    </Table.Button>
                   </Table.Row>
                 </Table.Body>
               </Table.Container>
@@ -478,15 +553,13 @@ const page = () => {
                   <Table.Row>
                     <Table.InputCell />
                     <Table.InputCell />
-                    <Table.Td>
-                      <button className="text-sm bg-transparent border-none text-gray-700 hover:text-red-500">
-                        <IconTrash
-                          size={20}
-                          strokeWidth={0.5}
-                          color='black'
-                        />
-                      </button>
-                    </Table.Td>
+                    <Table.Button>
+                      <IconTrash
+                        size={20}
+                        strokeWidth={0.5}
+                        color='black'
+                      />
+                    </Table.Button>
                   </Table.Row>
                 </Table.Body>
               </Table.Container>
