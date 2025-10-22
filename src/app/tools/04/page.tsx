@@ -296,7 +296,7 @@ const page = () => {
     // Lưu template tạm thời
     sessionStorage.setItem("reviewHtml", templateHtml);
     // Mở tab mới cùng origin
-    window.open("/tools/4/review", "_blank");
+    window.open("/tools/04/review", "_blank");
   }
 
   const selectColor = (color: string) => {
