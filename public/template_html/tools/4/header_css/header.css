@@ -412,18 +412,22 @@ html {
 
 .items .items-container .img-2col {
   width: 495px;
+  height: 495px;
 }
 
 .items .items-container .img-3col {
   width: 326px;
+  height: 326px;
 }
 
 .items .items-container .img-4col {
   width: 242px;
+  height: 242px;
 }
 
 .items .items-container .img-6col {
   width: 158px;
+  height: 158px;
 }
 
 .items .ranking-1st::before, .items .ranking-2nd::before, .items .ranking-3rd::before, .items .ranking-4th::before {

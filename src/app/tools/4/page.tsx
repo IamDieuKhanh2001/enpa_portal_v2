@@ -11,7 +11,6 @@ import SelectBox from '../../../component/common/SelectBox'
 import { FormikProvider, FormikValues, useFormik } from "formik";
 import * as Yup from 'yup';
 import Label from '@/component/common/Label'
-import { toast } from 'react-toastify'
 
 type navigationMenu = {
   id: number,
@@ -33,6 +32,12 @@ type slide = {
   id: number,
   slideImg: string
   url: string
+}
+type feature = {
+  id: number,
+  img: string,
+  url: string,
+  colWidth: string,
 }
 const page = () => {
 
@@ -118,6 +123,14 @@ const page = () => {
       url: "",
     },
   ]);
+  const [featureList, setFeatureList] = useState<feature[]>([
+    {
+      id: 1,
+      img: "",
+      url: "",
+      colWidth: "2",
+    },
+  ]);
 
   const [showButtonSetting, setShowButtonSettting] = useState<boolean>(false);
 
@@ -137,6 +150,9 @@ const page = () => {
       storeLogoUrl: "https://web20.empowerment-town.com/static/img/emportal_logo.png",
       hexColor: "#3B82F6",
       awards: [""],
+      featureTitle: "",
+      buttonText: "",
+      buttonLink: "",
     },
     validationSchema: Yup.object({
       topMessage: Yup.string().trim().required("最上部メッセージを入力してください。"),
@@ -149,7 +165,14 @@ const page = () => {
             .trim()
             .min(1, "必須") // không được để trống
         )
-        .min(1, "少なくとも1つ必要です") // ít nhất 1 phần tử trong mảng
+        .min(1, "少なくとも1つ必要です"), // ít nhất 1 phần tử trong mảng
+      featureTitle: Yup.string().trim().required("見出しを入力してください。"),
+      buttonText: showButtonSetting
+        ? Yup.string().trim().required("入力してください。")
+        : Yup.string().trim(),
+      buttonLink: showButtonSetting
+        ? Yup.string().trim().required("入力してください。")
+        : Yup.string().trim(),
     }),
     onSubmit: async (values) => {
       console.log("Form submitted:", values);
@@ -164,26 +187,9 @@ const page = () => {
     },
   });
 
-  // const uploadToRakutenGold = async (htmlContent: string) => {
-
-  //   try {
-  //     const res = await fetch("/api/tools/4", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ fileName: "header_4.html", content: htmlContent }),
-  //     });
-  //     const data = await res.json();
-  //     toast.success(data.message);
-  //     console.log(data)
-  //   } catch (err) {
-  //     toast.error("アップロード中にエラーが発生しました。");
-  //   }
-  // }
-
   const editHtmlContent = (templateHtml: string, values: any) => {
 
     // 3️⃣ Thêm <base href> để trình duyệt hiểu đường dẫn tương đối
-    // 👉 Chèn ngay sau <head>
     templateHtml = templateHtml.replace(
       /<head[^>]*>/i,
       `<head><base href="${window.location.origin}/template_html/tools/4/">`
@@ -264,7 +270,16 @@ const page = () => {
       .join("\n");
     templateHtml = templateHtml.replace("{{SLIDE}}", slideHtml);
 
-
+    // 特集設定
+    let featureHtml = featureList
+      .filter(item => !(item.img === "" && item.url === "")) // bỏ item toàn rỗng
+      .map(item => `
+            <div class="item">
+                <a href=${item.url}><img class=${`img-` + item.colWidth + `col`} src=${item.img}></a>
+            </div>
+        `)
+      .join("\n");
+    templateHtml = templateHtml.replace("{{FEATURE_IMGS}}", featureHtml);
 
     return templateHtml;
   }
@@ -376,9 +391,27 @@ const page = () => {
     formik.setFieldValue("awards", newAwards);
   }
 
+  const addFeatureRow = () => {
+    let newRow: feature = {
+      id: featureList.length + 1,
+      img: "",
+      url: "",
+      colWidth: "2",
+    };
+    setFeatureList((prev) => [...prev, newRow]);
+  };
+
+  const deleteFeatureRow = (id: number) => {
+
+    setFeatureList((prev) => {
+      const filtered = prev.filter((r) => r.id !== id);
+      return filtered.map((r, index) => ({ ...r, id: index + 1 }));
+    });
+  };
+
   useEffect(() => {
-    console.log(formik.values)
-  }, [formik])
+    console.log(featureList)
+  }, [featureList])
 
   return (
     <>
@@ -466,6 +499,7 @@ const page = () => {
                         <Button
                           size='sm'
                           color='textOnly'
+                          className='px-0'
                           disabled={formik.values.awards.length === 1 ? true : false}
                           onClick={() => deleteInputAwardImg(index)}
                         >
@@ -774,19 +808,18 @@ const page = () => {
             </CardHeader>
             <CardContent>
               <TextBox
-                id=""
-                name=""
+                id="featureTitle"
+                name="featureTitle"
                 type="text"
                 width='lg'
                 isRequired={true}
                 label={"見出し"}
-                value={""}
+                value={formik.values.featureTitle}
                 placeholder="例：新商品"
                 direction="vertical"
-                readOnly={true}
-              // onChange={formik.handleChange}
-              // error={formik.errors.}
-              // touched={formik.touched.}
+                onChange={formik.handleChange}
+                error={formik.errors.featureTitle}
+                touched={formik.touched.featureTitle}
               />
               <Table.Container>
                 <Table.Head>
@@ -798,27 +831,67 @@ const page = () => {
                   </Table.Row>
                 </Table.Head>
                 <Table.Body>
-                  <Table.Row>
-                    <Table.InputCell />
-                    <Table.InputCell />
-                    <Table.SelectBox>
-                      <Table.Option value={"1"}>aaaa</Table.Option>
-                      <Table.Option value={"2"}>bbbb</Table.Option>
-                    </Table.SelectBox>
-                    <Table.Button>
-                      <IconTrash
-                        size={20}
-                        strokeWidth={0.5}
-                        color='black'
+                  {featureList?.map((item, index) => (
+                    <Table.Row key={`feature-${index}`}>
+                      <Table.InputCell
+                        value={item.img}
+                        onChange={(e) => {
+                          setFeatureList((prevRows) =>
+                            prevRows.map((r) =>
+                              r.id === item.id
+                                ? { ...r, img: e.target.value }
+                                : r
+                            )
+                          )
+                        }}
                       />
-                    </Table.Button>
-                  </Table.Row>
+                      <Table.InputCell
+                        value={item.url}
+                        onChange={(e) => {
+                          setFeatureList((prevRows) =>
+                            prevRows.map((r) =>
+                              r.id === item.id
+                                ? { ...r, url: e.target.value }
+                                : r
+                            )
+                          )
+                        }}
+                      />
+                      <Table.SelectBox
+                        value={item.colWidth}
+                        onChange={(e) => {
+                          setFeatureList((prevRows) =>
+                            prevRows.map((r) =>
+                              r.id === item.id
+                                ? { ...r, colWidth: e.target.value }
+                                : r
+                            )
+                          )
+                        }}
+                      >
+                        <Table.Option value={"2"}>2列用</Table.Option>
+                        <Table.Option value={"3"}>3列用</Table.Option>
+                        <Table.Option value={"4"}>4列用</Table.Option>
+                        <Table.Option value={"6"}>6列用</Table.Option>
+                      </Table.SelectBox>
+                      <Table.Button
+                        onClick={() => deleteFeatureRow(item.id)}
+                      >
+                        <IconTrash
+                          size={20}
+                          strokeWidth={0.5}
+                          color='black'
+                        />
+                      </Table.Button>
+                    </Table.Row>
+                  ))}
                 </Table.Body>
               </Table.Container>
               <Button
                 className='mb-2'
                 size='sm'
                 color='secondary'
+                onClick={() => addFeatureRow()}
               >
                 項目を追加
               </Button>
@@ -827,7 +900,7 @@ const page = () => {
                 name=''
                 label='ボタン有無'
                 width='sm'
-                value={"0"}
+                value={showButtonSetting ? "1" : "0"}
                 options={[
                   { value: '1', label: '有' },
                   { value: '0', label: '無' },
@@ -840,46 +913,32 @@ const page = () => {
                 (
                   <>
                     <TextBox
-                      id=""
-                      name=""
-                      type="text"
-                      width='lg'
-                      isRequired={true}
-                      label={"ボタンカラー"}
-                      value={""}
-                      placeholder="例：#3B82F6"
-                      direction="vertical"
-                    // onChange={formik.handleChange}
-                    // error={formik.errors.}
-                    // touched={formik.touched.}
-                    />
-                    <TextBox
-                      id=""
-                      name=""
+                      id="buttonText"
+                      name="buttonText"
                       type="text"
                       width='lg'
                       isRequired={true}
                       label={"ボタン文言"}
-                      value={""}
+                      value={formik.values.buttonText}
                       placeholder="例：楽天に遷移する"
                       direction="vertical"
-                    // onChange={formik.handleChange}
-                    // error={formik.errors.}
-                    // touched={formik.touched.}
+                      onChange={formik.handleChange}
+                      error={formik.errors.buttonText}
+                      touched={formik.touched.buttonText}
                     />
                     <TextBox
-                      id=""
-                      name=""
+                      id="buttonLink"
+                      name="buttonLink"
                       type="text"
                       width='lg'
                       isRequired={true}
                       label={"ボタンリンク先"}
-                      value={""}
+                      value={formik.values.buttonLink}
                       placeholder="例：https://www.rakuten.co.jp/"
                       direction="vertical"
-                    // onChange={formik.handleChange}
-                    // error={formik.errors.}
-                    // touched={formik.touched.}
+                      onChange={formik.handleChange}
+                      error={formik.errors.buttonLink}
+                      touched={formik.touched.buttonLink}
                     />
                   </>
                 )
