@@ -1,12 +1,16 @@
 import React from "react";
-import { cn } from '../../lib/utils';
+import { cn } from "../../lib/utils";
 
 // ==================== Container ====================
 const TableContainer = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ children, className, ...props }, ref) => (
-  <div className={cn("w-full overflow-x-auto bg-white", className)} {...props} ref={ref}>
+  <div
+    className={cn("w-full overflow-x-auto bg-white", className)}
+    {...props}
+    ref={ref}
+  >
     <table className={cn("w-full min-w-[600px] border-collapse", className)}>
       {children}
     </table>
@@ -47,13 +51,25 @@ const TableRow: React.FC<React.HTMLAttributes<HTMLTableRowElement>> = ({
 );
 
 // ==================== Th ====================
-interface TableHeadCellProps extends React.ThHTMLAttributes<HTMLTableCellElement> {
+interface TableHeadCellProps
+  extends React.ThHTMLAttributes<HTMLTableCellElement> {
   width?: string; // Tailwind width class
   center?: boolean;
 }
-const TableHeadCell: React.FC<TableHeadCellProps> = ({ children, width, center, className, ...props }) => (
+const TableHeadCell: React.FC<TableHeadCellProps> = ({
+  children,
+  width,
+  center,
+  className,
+  ...props
+}) => (
   <th
-    className={cn("p-3 bg-gray-50 font-semibold border", width, center && "text-center", className)}
+    className={cn(
+      "p-3 bg-gray-50 font-medium border",
+      width,
+      center && "text-center",
+      className
+    )}
     {...props}
   >
     {children}
@@ -63,24 +79,40 @@ const TableHeadCell: React.FC<TableHeadCellProps> = ({ children, width, center, 
 // ==================== Td ====================
 interface TableCellProps extends React.TdHTMLAttributes<HTMLTableCellElement> {
   position?: "left" | "center" | "right";
+  center?: boolean;
 }
 const tdPositionClass: Record<string, string> = {
   left: "text-left",
   center: "text-center",
   right: "text-right",
 };
-const TableCell: React.FC<TableCellProps> = ({ children, position = "center", className, ...props }) => (
-  <td className={cn("border px-2 py-2", tdPositionClass[position], className)} {...props}>
+const TableCell: React.FC<TableCellProps> = ({
+  children,
+  position = "center",
+  center,
+  className,
+  ...props
+}) => (
+  <td
+    className={cn(
+      "border px-2 py-2",
+      tdPositionClass[position],
+      center && "text-center",
+      className
+    )}
+    {...props}
+  >
     {children}
   </td>
 );
 
 // ==================== InputCell ====================
-interface TableInputCellProps extends React.InputHTMLAttributes<HTMLInputElement> {
-
-}
-const TableInputCell: React.FC<TableInputCellProps> = ({ className, ...props }) => (
-
+interface TableInputCellProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {}
+const TableInputCell: React.FC<TableInputCellProps> = ({
+  className,
+  ...props
+}) => (
   <td className="border text-center">
     <input
       {...props}
@@ -95,6 +127,7 @@ const TableInputCell: React.FC<TableInputCellProps> = ({ className, ...props }) 
 // ==================== Export ====================
 export const Table = {
   Container: TableContainer,
+  Root: TableContainer,
   Head: TableHead,
   Body: TableBody,
   Row: TableRow,
