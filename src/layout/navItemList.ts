@@ -36,7 +36,7 @@ const navItems = [
     children: [
       { label: "サムネコロ一括生成・反映予約", href: "/10" },
       { label: "楽天GOLDセール会場生成", href: "/11" },
-      { label: "二重価格セール画像生成", href: "/tools/03" },
+      { label: "二重価格セール画像生成", href: "/tools/3" },
       { label: "セール更新エクセル予約", href: "/13" },
       { label: "CSVアップロード予約", href: "/14" },
       { label: "カテゴリ別商品順位最適化", href: "/15" },
