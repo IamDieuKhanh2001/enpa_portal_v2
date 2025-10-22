@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
 import LayoutPortal from "@/layout/LayoutPortal";
+import Providers from "./providers";
 
 const notoSansJp = Noto_Sans_JP({
   subsets: ["latin"],
@@ -20,13 +21,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="ja">
       <body
         className={`${notoSansJp.variable} font-sans bg-background-subtle`}
         suppressHydrationWarning={true}
       >
-        <LayoutPortal>{children}</LayoutPortal>
+        <Providers>
+          <LayoutPortal>{children}</LayoutPortal>
+        </Providers>
       </body>
     </html>
   );
