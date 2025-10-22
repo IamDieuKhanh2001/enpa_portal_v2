@@ -22,7 +22,7 @@ const page = () => {
             setSuccessUpload(false);
             const uploadRakutenHtml = reviewHtml.replace(/<base[^>]*>/i, "");
 
-            const res = await fetch("/api/tools/4", {
+            const res = await fetch("/api/tools/04", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ fileName: "header_4.html", content: uploadRakutenHtml }),
