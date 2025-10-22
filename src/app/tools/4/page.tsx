@@ -11,6 +11,7 @@ import SelectBox from '../../../component/common/SelectBox'
 import { FormikProvider, FormikValues, useFormik } from "formik";
 import * as Yup from 'yup';
 import Label from '@/component/common/Label'
+import { toast } from 'react-toastify'
 
 type navigationMenu = {
   id: number,
@@ -118,6 +119,8 @@ const page = () => {
     },
   ]);
 
+  const [showButtonSetting, setShowButtonSettting] = useState<boolean>(false);
+
   const selectColorList = [
     "#3B82F6", // blue
     "#10B981", // green
@@ -134,13 +137,11 @@ const page = () => {
       storeLogoUrl: "https://web20.empowerment-town.com/static/img/emportal_logo.png",
       hexColor: "#3B82F6",
       awards: [""],
-      layoutColumn: "2",
     },
     validationSchema: Yup.object({
       topMessage: Yup.string().trim().required("最上部メッセージを入力してください。"),
       storeLogoUrl: Yup.string().trim().required("店舗ロゴURLを入力してください。"),
       hexColor: Yup.string().trim().required("メインカラーを選択してください。"),
-      layoutColumn: Yup.string().trim().required("レイアウトカラムを選択してください。"),
       awards: Yup.array()
         .of(
           Yup.string()
@@ -162,6 +163,22 @@ const page = () => {
       reviewLivePage(templateHtml);
     },
   });
+
+  // const uploadToRakutenGold = async (htmlContent: string) => {
+
+  //   try {
+  //     const res = await fetch("/api/tools/4", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ fileName: "header_4.html", content: htmlContent }),
+  //     });
+  //     const data = await res.json();
+  //     toast.success(data.message);
+  //     console.log(data)
+  //   } catch (err) {
+  //     toast.error("アップロード中にエラーが発生しました。");
+  //   }
+  // }
 
   const editHtmlContent = (templateHtml: string, values: any) => {
 
@@ -255,11 +272,16 @@ const page = () => {
   const reviewLivePage = (templateHtml: string) => {
 
     // 4️⃣ Tạo Blob để mở trong tab mới
-    const blob = new Blob([templateHtml], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
+    // const blob = new Blob([templateHtml], { type: "text/html" });
+    // const url = URL.createObjectURL(blob);
 
     // 5️⃣ Mở tab preview
-    window.open(url, "_blank");
+    // window.open(url, "_blank");
+
+    // Lưu template tạm thời
+    sessionStorage.setItem("reviewHtml", templateHtml);
+    // Mở tab mới cùng origin
+    window.open("/tools/4/review", "_blank");
   }
 
   const selectColor = (color: string) => {
@@ -480,7 +502,7 @@ const page = () => {
                 )}>
                 ナビゲーションメニュー
               </label>
-              <Table.Container className='mb-1'>
+              <Table.Container>
                 <Table.Head>
                   <Table.Row>
                     <Table.Th>項目名</Table.Th>
@@ -542,7 +564,7 @@ const page = () => {
                 )}>
                 アイコン付きメニュー
               </label>
-              <Table.Container className='mb-1'>
+              <Table.Container>
                 <Table.Head>
                   <Table.Row>
                     <Table.Th>画像URL</Table.Th>
@@ -616,7 +638,7 @@ const page = () => {
                 )}>
                 注目キーワード
               </label>
-              <Table.Container className='mb-1'>
+              <Table.Container>
                 <Table.Head>
                   <Table.Row>
                     <Table.Th>キーワード</Table.Th>
@@ -685,7 +707,7 @@ const page = () => {
                 )}>
                 スライドバナー
               </label>
-              <Table.Container className='mb-1'>
+              <Table.Container>
                 <Table.Head>
                   <Table.Row>
                     <Table.Th>スライドバナー画像URL</Table.Th>
@@ -743,39 +765,41 @@ const page = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>4. 特集設定</CardTitle>
+              <div className='flex flex-row items-center justify-between'>
+                <CardTitle>4. 特集設定</CardTitle>
+                <Button color='secondary' size='sm'>
+                  特集を追加
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
-              <SelectBox
-                id="layoutColumn"
-                name="layoutColumn"
-                width="sm"
-                label="レイアウト選択"
-                value={formik.values.layoutColumn}
-                readOnly={true}
-                options={[
-                  { value: "", label: "選択" },
-                  { value: "2", label: "2列" },
-                  { value: "3", label: "3列" },
-                  { value: "4", label: "4列" },
-                ]}
-                onChange={formik.handleChange}
-                error={formik.errors.layoutColumn}
-                touched={formik.touched.layoutColumn}
+              <TextBox
+                id=""
+                name=""
+                type="text"
+                width='lg'
                 isRequired={true}
+                label={"見出し"}
+                value={""}
+                placeholder="例：新商品"
+                direction="vertical"
+                readOnly={true}
+              // onChange={formik.handleChange}
+              // error={formik.errors.}
+              // touched={formik.touched.}
               />
-
-              <Table.Container className='mb-1'>
+              <Table.Container>
                 <Table.Head>
                   <Table.Row>
                     <Table.Th>画像URL</Table.Th>
                     <Table.Th>リンク先URL</Table.Th>
+                    <Table.Th>画像の横幅</Table.Th>
                     <Table.Th>削除</Table.Th>
                   </Table.Row>
                 </Table.Head>
-
                 <Table.Body>
                   <Table.Row>
+                    <Table.InputCell />
                     <Table.InputCell />
                     <Table.SelectBox>
                       <Table.Option value={"1"}>aaaa</Table.Option>
@@ -792,17 +816,81 @@ const page = () => {
                 </Table.Body>
               </Table.Container>
               <Button
+                className='mb-2'
                 size='sm'
                 color='secondary'
               >
                 項目を追加
               </Button>
+              <SelectBox
+                id=''
+                name=''
+                label='ボタン有無'
+                width='sm'
+                value={"0"}
+                options={[
+                  { value: '1', label: '有' },
+                  { value: '0', label: '無' },
+                ]}
+                onChange={(e) => {
+                  setShowButtonSettting(e.target.value === "1" ? true : false);
+                }}
+              />
+              {showButtonSetting &&
+                (
+                  <>
+                    <TextBox
+                      id=""
+                      name=""
+                      type="text"
+                      width='lg'
+                      isRequired={true}
+                      label={"ボタンカラー"}
+                      value={""}
+                      placeholder="例：#3B82F6"
+                      direction="vertical"
+                    // onChange={formik.handleChange}
+                    // error={formik.errors.}
+                    // touched={formik.touched.}
+                    />
+                    <TextBox
+                      id=""
+                      name=""
+                      type="text"
+                      width='lg'
+                      isRequired={true}
+                      label={"ボタン文言"}
+                      value={""}
+                      placeholder="例：楽天に遷移する"
+                      direction="vertical"
+                    // onChange={formik.handleChange}
+                    // error={formik.errors.}
+                    // touched={formik.touched.}
+                    />
+                    <TextBox
+                      id=""
+                      name=""
+                      type="text"
+                      width='lg'
+                      isRequired={true}
+                      label={"ボタンリンク先"}
+                      value={""}
+                      placeholder="例：https://www.rakuten.co.jp/"
+                      direction="vertical"
+                    // onChange={formik.handleChange}
+                    // error={formik.errors.}
+                    // touched={formik.touched.}
+                    />
+                  </>
+                )
+              }
             </CardContent>
           </Card>
           <div className='flex justify-center'>
             <Button
               size='lg'
               type='submit'
+              disabled={!(formik.isValid && formik.dirty)}
               onClick={formik.submitForm}>
               プレビュー
             </Button>

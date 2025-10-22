@@ -7,8 +7,8 @@ const TableContainer = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ children, className, ...props }, ref) => (
-  <div className={cn("w-full overflow-x-auto bg-white", className)} {...props} ref={ref}>
-    <table className={cn("w-full min-w-[600px] border-collapse", className)}>
+  <div className={cn("w-full overflow-x-auto bg-white mb-1", className)} {...props} ref={ref}>
+    <table className={cn("w-full min-w-[600px] border-collapse")}>
       {children}
     </table>
   </div>

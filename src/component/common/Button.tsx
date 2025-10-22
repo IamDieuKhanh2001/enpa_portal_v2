@@ -8,14 +8,14 @@ const colorClass: Record<string, string> = {
   textOnly: "bg-transparent border-none text-gray-700 hover:text-red-500 disabled:text-gray-400 disabled:cursor-not-allowed",
 };
 const sizeClass: Record<string, string> = {
-  sm: "px-3 py-1.5 text-sm",
-  md: "px-4 py-2 text-sm",
-  lg: "px-6 py-2.5 text-base",
+  sm: "px-3 py-1.5 text-sm min-w-[80px]",
+  md: "px-4 py-2 text-sm min-w-[120px]",
+  lg: "px-6 py-2.5 text-base min-w-[180px]",
 };
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
-    color?: "primary" | "secondary" | "textOnly",
-    size?: "sm" | "md" | "lg",
+  color?: "primary" | "secondary" | "textOnly",
+  size?: "sm" | "md" | "lg",
 }
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className = "", type = "button", color = "primary", size = "md", ...props }, ref) => {
