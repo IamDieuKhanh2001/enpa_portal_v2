@@ -189,27 +189,13 @@ const page = () => {
 
   const editHtmlContent = (templateHtml: string, values: any) => {
 
-    // 3️⃣ Thêm <base href> để trình duyệt hiểu đường dẫn tương đối
-    templateHtml = templateHtml.replace(
-      /<head[^>]*>/i,
-      `<head><base href="${window.location.origin}/template_html/tools/4/">`
-    );
-
-    templateHtml = templateHtml.replace("{{PAGE_TITLE}}", "PC用ヘッダー作成");
-    templateHtml = templateHtml.replace("{{MAIN_COLOR}}", `style="background-color:${values.hexColor};"`);
-    templateHtml = templateHtml.replace("{{TOP_MSG}}", `${values.topMessage}`);
-
     // ナビゲーションメニュー
     let navigationHtml = navigationList
       .filter(item => !(item.name === "" && item.url === "")) // bỏ item toàn rỗng
-      .map(item => `<li><a href="${item.url}">${item.name}</a></li>`)
+      .map(item => `<li><a href="${item.url}" target="_blank" rel="noopener noreferrer">${item.name}</a></li>`)
       .join("\n");
 
-    templateHtml = templateHtml.replace("{{NAVIGATION_MENU}}", navigationHtml);
-
     // 店舗ロゴURL
-    templateHtml = templateHtml.replace("{{STORE_LOGO_URL}}", `${values.storeLogoUrl}`);
-
     // 受賞ロゴ
     let awardIconHtml = "";
     values.awards?.map((awardUrl: string) => {
@@ -217,7 +203,6 @@ const page = () => {
         <img src=${awardUrl} alt="award">
       `
     })
-    templateHtml = templateHtml.replace("{{IMG_AWARD}}", awardIconHtml);
 
     // アイコン付きメニュー
     let iconMenuHtml = "";
@@ -230,7 +215,7 @@ const page = () => {
 
       group.forEach(item => {
         iconMenuHtml += `
-          <a href=${item.url}>
+          <a href=${item.url} target="_blank" rel="noopener noreferrer">
             <div class="icon-cell">
               <img src="${item.img}" alt="${item.text}">
               <p>${item.text}</p>
@@ -241,45 +226,106 @@ const page = () => {
 
       iconMenuHtml += `</div>\n`;
     }
-    templateHtml = templateHtml.replace("{{ICON_MENU}}", iconMenuHtml);
 
     // 注目キーワード
     let suggestKeywordHtml = suggestKeywordList
       .filter(item => !(item.keyword === "" && item.url === "")) // bỏ item toàn rỗng
       .map(item => `
           <a
-            href=${item.url}>
+            href=${item.url} target="_blank" rel="noopener noreferrer">
               <p>#${item.keyword}</p>
           </a>
         `)
       .join("\n");
-    templateHtml = templateHtml.replace("{{SUGGEST_KEYWORD}}", suggestKeywordHtml);
 
     // スライドバナー
-    let slideHtml = slideList
-      .filter(item => !(item.slideImg === "" && item.url === "")) // bỏ item toàn rỗng
-      .map(item => `
+    const validSlides = slideList.filter(item => !(item.slideImg === "" && item.url === ""));
+
+    let slideHtml = "";
+    if (validSlides.length > 0) {
+      const innerSlides = validSlides
+        .map(item => `
           <div class="slider-img">
-
-              <a href=${item.url}>
-                  <img src=${item.slideImg} alt="バナー">
-              </a>
-
+            <a href="${item.url}" target="_blank" rel="noopener noreferrer">
+              <img src="${item.slideImg}" alt="バナー">
+            </a>
           </div>
         `)
-      .join("\n");
-    templateHtml = templateHtml.replace("{{SLIDE}}", slideHtml);
+        .join("\n");
+
+      slideHtml = `
+        <div class="slider">
+          ${innerSlides}
+        </div>
+      `;
+    }
 
     // 特集設定
-    let featureHtml = featureList
-      .filter(item => !(item.img === "" && item.url === "")) // bỏ item toàn rỗng
-      .map(item => `
+    const validFeatures = featureList.filter(item => !(item.img === "" && item.url === ""));
+    let featureHtml = "";
+    if (validFeatures.length > 0 && values.featureTitle !== "") {
+      const innerFeature = validFeatures
+        .map(item => `
             <div class="item">
-                <a href=${item.url}><img class=${`img-` + item.colWidth + `col`} src=${item.img}></a>
+              <a href=${item.url} target="_blank" rel="noopener noreferrer">
+                <img class=${`img-` + item.colWidth + `col`} src=${item.img}>
+              </a>
             </div>
         `)
-      .join("\n");
-    templateHtml = templateHtml.replace("{{FEATURE_IMGS}}", featureHtml);
+        .join("\n");
+
+      let innerButton = ``;
+      if (showButtonSetting) {
+        innerButton = `
+          <div class="button" style="background-color:${values.hexColor};">
+            <a href=${values.buttonLink} target="_blank" rel="noopener noreferrer">
+              <p>${values.buttonText}</p>
+            </a>
+          </div>
+        `
+      }
+
+      featureHtml = `
+              <div class="items">
+                  <div class="title" style="background-color:${values.hexColor};">
+                      ${values.featureTitle}
+                  </div>
+                  <div class="items-container">
+
+                      ${innerFeature}
+
+                  </div>
+
+                  ${innerButton}
+
+              </div>
+        `;
+    }
+
+    // Thêm <base href> để trình duyệt hiểu đường dẫn tương đối
+    templateHtml = templateHtml.replace(
+      /<head[^>]*>/i,
+      `<head><base href="${window.location.origin}/template_html/tools/4/">`
+    );
+    // Gán các giá trị vào template
+    templateHtml = templateHtml.replace("{{PAGE_TITLE}}", "PC用ヘッダー作成");
+    templateHtml = templateHtml.replace(/{{MAIN_COLOR}}/g, values.hexColor);
+    templateHtml = templateHtml.replace("{{TOP_MSG}}", `${values.topMessage}`);
+    templateHtml = templateHtml.replace("{{NAVIGATION_MENU}}", navigationHtml);
+    templateHtml = templateHtml.replace("{{STORE_LOGO_URL}}", `${values.storeLogoUrl}`);
+    templateHtml = templateHtml.replace("{{IMG_AWARD}}", awardIconHtml);
+    templateHtml = templateHtml.replace("{{ICON_MENU}}", iconMenuHtml);
+    templateHtml = templateHtml.replace("{{SUGGEST_KEYWORD}}", suggestKeywordHtml);
+    if (slideHtml !== "") {
+      templateHtml = templateHtml.replace("{{SLIDE}}", slideHtml);
+    } else {
+      templateHtml = templateHtml.replace("{{SLIDE}}", "");
+    }
+    if (featureHtml !== "") {
+      templateHtml = templateHtml.replace("{{FEATURE}}", featureHtml);
+    } else {
+      templateHtml = templateHtml.replace("{{FEATURE}}", "");
+    }
 
     return templateHtml;
   }
@@ -525,6 +571,17 @@ const page = () => {
             </CardContent>
           </Card>
           <Card>
+            {/* <CardHeader 
+            title="" 
+            subTitle="" 
+            buttonGroup={
+              <>
+               <Button />
+               <Button />
+               <Button />
+              </>
+            }
+            /> */}
             <CardHeader>
               <CardTitle>2. メニュー設定</CardTitle>
             </CardHeader>
@@ -799,12 +856,7 @@ const page = () => {
 
           <Card>
             <CardHeader>
-              <div className='flex flex-row items-center justify-between'>
-                <CardTitle>4. 特集設定</CardTitle>
-                <Button color='secondary' size='sm'>
-                  特集を追加
-                </Button>
-              </div>
+              <CardTitle>4. 特集設定</CardTitle>
             </CardHeader>
             <CardContent>
               <TextBox

@@ -47,6 +47,7 @@ const page = () => {
             `  src="https://www.rakuten.ne.jp/gold/auc-ronnefeldt/public_html/tools/4/header_4.html"`,
             '  frameborder="0"',
             '  style="width: 100%; height: 2000px"',
+            '  sandbox="allow-same-origin allow-scripts allow-popups allow-top-navigation"',
             "></iframe>",
         ].join("\n");
         setCode(iframeCode);
@@ -84,7 +85,7 @@ const page = () => {
                         ref={iframeRef}
                         srcDoc={reviewHtml}
                         className="w-full h-[600px] border rounded-md"
-                        sandbox="allow-scripts allow-same-origin"
+                        sandbox="allow-same-origin allow-scripts allow-popups allow-top-navigation"
                     />
                     <div className="flex justify-center mt-4">
                         <Button

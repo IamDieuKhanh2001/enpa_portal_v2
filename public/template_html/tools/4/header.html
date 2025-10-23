@@ -26,7 +26,7 @@
 
 <body>
 
-    <div id="top-nav" {{MAIN_COLOR}}>
+    <div id="top-nav" style="background-color:{{MAIN_COLOR}};">
         <div id="top-nav-container">
             <div id="top-nav-left">{{TOP_MSG}}</div>
             <div id="top-nav-right">
@@ -46,7 +46,7 @@
     <div id="main-logo">
         <div id="main-logo-wrapper">
 
-            <a href="https://www.rakuten.co.jp/vapecollection/">
+            <a target="_blank" rel="noopener noreferrer" href="">
                 <img src="{{STORE_LOGO_URL}}" alt="店舗ロゴ">
             </a>
 
@@ -54,7 +54,7 @@
 
         </div>
         <div id="rakuten-logo">
-            <a href="https://www.rakuten.co.jp/"><img src="img\rakuten_logo.jpg" alt="楽天市場"></a>
+            <a target="_blank" rel="noopener noreferrer" href="https://www.rakuten.co.jp/"><img src="img\rakuten_logo.jpg" alt="楽天市場"></a>
         </div>
 
     </div>
@@ -77,17 +77,12 @@
                 <p id="keywords-title">注目キーワード：</p>
 
                 {{SUGGEST_KEYWORD}}
-
                 
             </div>
         </div>
     </div>
 
-    <div class="slider">
-
-        {{SLIDE}}
-
-    </div>
+    {{SLIDE}}
 
     <style>
         .slider .slide-dots li button::before {
@@ -95,23 +90,7 @@
         }
     </style>
 
-    <div class="items">
-        <div class="title" {{MAIN_COLOR}}>
-            {{FEATURE_TITLE}}
-        </div>
-        <div class="items-container">
-
-            {{FEATURE_IMGS}}
-
-        </div>
-
-        <div class="button" {{MAIN_COLOR}}>
-            <a href="#">
-                <p>新商品一覧</p>
-            </a>
-        </div>
-
-    </div>
+    {{FEATURE}}
 
 </body>
 
