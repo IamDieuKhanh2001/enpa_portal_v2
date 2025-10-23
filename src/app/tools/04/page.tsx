@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../../../component/common/Card'
+import { Card, CardContent, CardHeader } from '../../../component/common/Card'
 import { TextBox } from '../../../component/common/TextBox'
 import { cn } from '../../../lib/utils'
 import { Button } from '../../../component/common/Button'
@@ -464,9 +464,7 @@ const page = () => {
       <FormikProvider value={formik}>
         <form onSubmit={formik.handleSubmit}>
           <Card>
-            <CardHeader>
-              <CardTitle>1.基本設定</CardTitle>
-            </CardHeader>
+            <CardHeader title='1.基本設定' />
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                 {/* 基本設定 Col 1  */}
@@ -582,9 +580,7 @@ const page = () => {
               </>
             }
             /> */}
-            <CardHeader>
-              <CardTitle>2. メニュー設定</CardTitle>
-            </CardHeader>
+            <CardHeader title='2. メニュー設定' />
             <CardContent>
               <label
                 htmlFor={""}
@@ -787,9 +783,7 @@ const page = () => {
           </Card>
 
           <Card>
-            <CardHeader>
-              <CardTitle>3. バナー設定</CardTitle>
-            </CardHeader>
+            <CardHeader title='3. バナー設定' />
             <CardContent>
               <label
                 htmlFor={""}
@@ -855,9 +849,7 @@ const page = () => {
           </Card>
 
           <Card>
-            <CardHeader>
-              <CardTitle>4. 特集設定</CardTitle>
-            </CardHeader>
+            <CardHeader title='4. 特集設定' />
             <CardContent>
               <TextBox
                 id="featureTitle"

@@ -1,7 +1,7 @@
 'use client'
 
 import Image from "next/image";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../component/common/Card";
+import { Card, CardContent, CardFooter, CardHeader } from "../component/common/Card";
 import { TextBox } from "../component/common/TextBox";
 import { Button } from "../component/common/Button";
 import { Alert } from "../component/common/Alert";
@@ -47,7 +47,7 @@ export default function Home() {
 
   return (
     <>
-      <Tabs defaultTab="tab3">
+      <Tabs defaultTab="tab1">
         <TabsList>
           <TabsTrigger value="tab1">Mẫu các component</TabsTrigger>
           <TabsTrigger value="tab2">サムネ画像自動更新</TabsTrigger>
@@ -58,9 +58,17 @@ export default function Home() {
           <div className="">
             <h1 className="text-2xl font-bold text-gray-800 mb-2">Form test</h1>
             <Card>
-              <CardHeader>
-                <CardTitle>Thư viện Formik</CardTitle>
-              </CardHeader>
+              <CardHeader
+                title="formik"
+                description="formik test with yup validation"
+                buttonGroup={
+                  <>
+                    <Button size="sm" color="primary">行を追加</Button>
+                    <Button size="sm" color="secondary">5行追加</Button>
+                    <Button size="sm" color="grey">CSVで一括取り込む</Button>
+                  </>
+                }
+              />
               <CardContent>
                 <IconAdjustments
                   size={48}
@@ -156,10 +164,17 @@ export default function Home() {
 
             <h1 className="text-2xl font-bold text-gray-800 mb-2">セールページ作成</h1>
             <Card>
-              <CardHeader>
-                <CardTitle>カードタイトル</CardTitle>
-                <CardDescription>カードdes</CardDescription>
-              </CardHeader>
+              <CardHeader
+                title="カードタイトル"
+                description="カードdes"
+                buttonGroup={
+                  <>
+                    <Button>aaa</Button>
+                    <Button>aaa</Button>
+                    <Button>aaa</Button>
+                  </>
+                }
+              />
               <CardContent>
                 <TextBox
                   id="custom-event-name"
@@ -206,10 +221,7 @@ export default function Home() {
             </Card>
 
             <Card>
-              <CardHeader>
-                <CardTitle>Component alert</CardTitle>
-                <CardDescription>aaaa</CardDescription>
-              </CardHeader>
+              <CardHeader title="Component alert" />
               <CardContent>
                 <Alert variant="info">
                   thong bao info
@@ -227,10 +239,7 @@ export default function Home() {
             </Card>
 
             <Card>
-              <CardHeader>
-                <CardTitle>Component Button</CardTitle>
-                <CardDescription>mau nut button</CardDescription>
-              </CardHeader>
+              <CardHeader title="Component Button" />
               <CardContent>
                 <Button style={{ background: "darkblue" }} color="primary">primary</Button>
                 <Button color="secondary">secondary</Button>
@@ -245,10 +254,7 @@ export default function Home() {
             </Card>
 
             <Card>
-              <CardHeader>
-                <CardTitle>Component Icon</CardTitle>
-                <CardDescription>aaaa</CardDescription>
-              </CardHeader>
+              <CardHeader title="Component Icon" />
               <CardContent>
                 <IconAdOff
                   size={48}
@@ -261,10 +267,7 @@ export default function Home() {
             </Card>
 
             <Card>
-              <CardHeader>
-                <CardTitle>Component Icon</CardTitle>
-                <CardDescription>aaaa</CardDescription>
-              </CardHeader>
+              <CardHeader title="Component Badge" />
               <CardContent>
                 <Badge color="primary">
                   primary
@@ -288,10 +291,7 @@ export default function Home() {
             <GridRow cols={12} gap="gap-2">
               <GridCol md={2} lg={2}>
                 <Card>
-                  <CardHeader>
-                    <CardTitle>Component Button</CardTitle>
-                    <CardDescription>mau nut button</CardDescription>
-                  </CardHeader>
+                  <CardHeader title="Component Button" />
                   <CardContent>
                     <Button style={{ background: "darkblue" }} color="primary">primary</Button>
                     <Button color="secondary">secondary</Button>
@@ -304,10 +304,7 @@ export default function Home() {
 
               <GridCol md={6} lg={4}>
                 <Card>
-                  <CardHeader>
-                    <CardTitle>Component Button</CardTitle>
-                    <CardDescription>mau nut button</CardDescription>
-                  </CardHeader>
+                  <CardHeader title="Component Button" />
                   <CardContent>
                     <Button style={{ background: "darkblue" }} color="primary">primary</Button>
                     <Button color="secondary">secondary</Button>
@@ -319,10 +316,7 @@ export default function Home() {
 
               <GridCol md={12} lg={4}>
                 <Card>
-                  <CardHeader>
-                    <CardTitle>Component Button</CardTitle>
-                    <CardDescription>mau nut button</CardDescription>
-                  </CardHeader>
+                  <CardHeader title="Component Button" />
                   <CardContent>
                     <Button style={{ background: "darkblue" }} color="primary">primary</Button>
                     <Button color="secondary">secondary</Button>
@@ -373,7 +367,7 @@ export default function Home() {
             <Table.Row>
               <Table.Td position="left">りんご</Table.Td>
               <Table.InputCell
-    
+
               />
             </Table.Row>
           </Table.Body>

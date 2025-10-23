@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "../../lib/utils";
+import { Button } from "./Button";
 
 // Card
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -26,56 +27,78 @@ Card.displayName = "Card";
 
 // Card header
 interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
-    children?: React.ReactNode;
+    title: string;
+    description?: string;
+    classNameHeader?: string;
+    classNameTitle?: string;
+    classNameDescription?: string;
+    buttonGroup?:
+    | React.ReactElement<typeof Button> // cho phép <Button />
+    | React.ReactElement<'button'>      // cho phép <button>
+    | (React.ReactElement<typeof Button> | React.ReactElement<'button'>)[]; // cho phép mảng
 }
 const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
-    ({ children, className = "", ...props }, ref) => {
+    ({ title, description = "", classNameHeader = "", classNameTitle = "", classNameDescription = "", buttonGroup = <></>, ...props }, ref) => {
         return (
             <div
                 ref={ref}
-                className={cn("flex flex-col space-y-1.5 p-6 mb-3 border-b border-gray-200", className)}
+                className={cn("flex items-center justify-between px-6 py-4 mb-3 border-b border-gray-200", classNameHeader,)}
                 {...props}
             >
-                {children}
+                <div>
+                    <h3
+                        className={cn(
+                            "text-lg font-bold leading-none tracking-tight",
+                            classNameTitle,
+                        )}
+                    >
+                        {title}
+                    </h3>
+                    {description && (
+                        <p
+                            className={cn("text-sm text-gray-500 mt-2", classNameDescription,)}
+                        >
+                            {description}
+                        </p>
+                    )}
+                </div>
+                {buttonGroup && (
+                    <div className="flex gap-1">
+                        {buttonGroup}
+                    </div>
+                )}
             </div>
         );
     }
 );
+CardHeader.displayName = "CardHeader";
 
 // CardTitle
 interface CardTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
+    classNameTitle?: string;
+    classNameDescription?: string;
+
 }
 const CardTitle = React.forwardRef<HTMLParagraphElement, CardTitleProps>(
     ({ className = "", ...props }, ref) => {
         return (
-            <h3
-                ref={ref}
-                className={cn(
-                    "text-lg font-bold leading-none tracking-tight",
-                    className
-                )}
-                {...props}
-            />
+            <>
+                <h3
+                    ref={ref}
+                    className={cn(
+                        "text-lg font-bold leading-none tracking-tight",
+                        className
+                    )}
+                    {...props}
+                />
+                <p
+                    className={cn("text-sm text-gray-500", className)}
+                />
+            </>
         );
     }
 );
 CardTitle.displayName = "CardTitle";
-
-// CardDescription
-interface CardDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {
-}
-const CardDescription = React.forwardRef<HTMLParagraphElement, CardDescriptionProps>(
-    ({ className = "", ...props }, ref) => {
-        return (
-            <p
-                ref={ref}
-                className={cn("text-sm text-gray-500", className)}
-                {...props}
-            />
-        );
-    }
-);
-CardDescription.displayName = "CardDescription";
 
 // CardContent
 interface CardContentProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -117,8 +140,6 @@ CardFooter.displayName = "CardFooter";
 export {
     Card,
     CardHeader,
-    CardTitle,
-    CardDescription,
     CardContent,
     CardFooter,
 };
