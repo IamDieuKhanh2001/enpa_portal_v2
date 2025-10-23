@@ -915,14 +915,14 @@ const page = () => {
                 <Button
                   color='primary'
                   size='sm'
-                  onClick={() => addNavigationRow()}
+                  onClick={() => addFeatureRow(1)}
                 >
                   行を追加
                 </Button>
                 <Button
                   color='secondary'
                   size='sm'
-                  onClick={() => addNavigationRow()}
+                  onClick={() => addFeatureRow(5)}
                 >
                   5行追加
                 </Button>
@@ -993,14 +993,6 @@ const page = () => {
                   ))}
                 </Table.Body>
               </Table.Container>
-              <Button
-                className='mb-2'
-                size='sm'
-                color='secondary'
-                onClick={() => addFeatureRow()}
-              >
-                項目を追加
-              </Button>
               <SelectBox
                 id=''
                 name=''
