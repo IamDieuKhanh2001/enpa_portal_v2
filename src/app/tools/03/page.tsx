@@ -5,7 +5,6 @@ import {
   Card,
   CardContent,
   CardHeader,
-  CardTitle,
 } from "../../../component/common/Card";
 import { Button } from "../../../component/common/Button";
 import { Table } from "../../../component/common/Table";
@@ -77,61 +76,6 @@ type RowErrors = {
   saleText?: string;
 };
 type AllErrors = { [key: string]: RowErrors };
-
-// --- Component ToolCardHeader ---
-interface ToolCardHeaderProps {
-  title: string;
-  onAddRow?: () => void;
-  onAddMultipleRows?: () => void;
-  onImportCSV?: () => void;
-}
-
-function ToolCardHeader({
-  title,
-  onAddRow,
-  onAddMultipleRows,
-  onImportCSV,
-}: ToolCardHeaderProps) {
-  return (
-    <CardHeader className="flex flex-row items-center justify-between">
-      <div className="flex items-baseline gap-4">
-        <CardTitle>{title}</CardTitle>
-        <span className="text-sm text-gray-500">
-          <span className="text-red-500 font-bold">*</span> は必須項目です。
-        </span>
-      </div>
-      <div className="flex items-center space-x-2">
-        {onAddRow && (
-          <Button
-            size="sm"
-            onClick={onAddRow}
-            className="bg-secondary hover:bg-secondary-hover text-white"
-          >
-            行を追加
-          </Button>
-        )}
-        {onAddMultipleRows && (
-          <Button
-            size="sm"
-            onClick={onAddMultipleRows}
-            className="bg-secondary hover:bg-secondary-hover text-white"
-          >
-            5行追加
-          </Button>
-        )}
-        {onImportCSV && (
-          <Button
-            size="sm"
-            onClick={onImportCSV}
-            className="bg-neutral hover:bg-neutral-hover text-gray-800"
-          >
-            CSVで一括取り込む
-          </Button>
-        )}
-      </div>
-    </CardHeader>
-  );
-}
 
 // --- Hàm tạo một dòng sản phẩm mới ---
 const createNewProductRow = (id: string): ProductRow => ({
@@ -374,11 +318,16 @@ function EditableProductTable({
         accept=".csv"
         style={{ display: "none" }}
       />
-      <ToolCardHeader
+      <CardHeader
         title="2. 商品情報入力"
-        onAddRow={addRow}
-        onAddMultipleRows={() => addMultipleRows(5)}
-        onImportCSV={handleImportCSV}
+        description='は必須項目です。'
+        buttonGroup={
+          <>
+            <Button color="secondary" onClick={() => addRow()}>行を追加</Button>
+            <Button color="secondary" onClick={() => addMultipleRows(5)}>5行を追加</Button>
+            <Button color="grey" onClick={() => handleImportCSV()}>CSVで一括取り込む</Button>
+          </>
+        }
       />
       <CardContent className="pb-8">
         <Table.Root className="w-full table-fixed">
@@ -523,7 +472,7 @@ function EditableProductTable({
                       className={cn(
                         "w-full h-full !p-2 !border-0 !rounded-none focus:!ring-1 focus:!ring-inset focus:!ring-primary truncate",
                         row.priceType === "custom" &&
-                          "!h-8 !py-1 border-b border-gray-300"
+                        "!h-8 !py-1 border-b border-gray-300"
                       )}
                       options={[
                         { value: "当店通常価格", label: "当店通常価格" },
@@ -705,11 +654,10 @@ function EditableProductTable({
                   <Table.Td center className="p-1 align-middle">
                     <button
                       onClick={() => deleteRow(row.id)}
-                      className={`p-1 ${
-                        rows.length > 1
-                          ? "text-gray-400 hover:text-red-600"
-                          : "text-gray-200 cursor-not-allowed"
-                      }`}
+                      className={`p-1 ${rows.length > 1
+                        ? "text-gray-400 hover:text-red-600"
+                        : "text-gray-200 cursor-not-allowed"
+                        }`}
                       disabled={rows.length <= 1}
                     >
                       <IconTrash size={20} />
@@ -812,9 +760,7 @@ export default function TwoPriceImagePage() {
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-gray-800">二重価格画像作成</h1>
       <Card>
-        <CardHeader>
-          <CardTitle>1. テンプレート</CardTitle>
-        </CardHeader>
+        <CardHeader title="1. テンプレート" />
         <CardContent>
           <div className="relative">
             <div className="flex items-start gap-4 overflow-x-auto pb-4">
