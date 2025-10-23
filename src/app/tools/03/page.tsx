@@ -1,11 +1,7 @@
 "use client";
 
 import React, { useId, useState, useEffect, useRef } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from "../../../component/common/Card";
+import { Card, CardContent, CardHeader } from "../../../component/common/Card";
 import { Button } from "../../../component/common/Button";
 import { Table } from "../../../component/common/Table";
 import { TextBox } from "../../../component/common/TextBox";
@@ -320,12 +316,18 @@ function EditableProductTable({
       />
       <CardHeader
         title="2. 商品情報入力"
-        description='は必須項目です。'
+        description="は必須項目です。"
         buttonGroup={
           <>
-            <Button color="secondary" onClick={() => addRow()}>行を追加</Button>
-            <Button color="secondary" onClick={() => addMultipleRows(5)}>5行を追加</Button>
-            <Button color="grey" onClick={() => handleImportCSV()}>CSVで一括取り込む</Button>
+            <Button color="secondary" onClick={() => addRow()}>
+              行を追加
+            </Button>
+            <Button color="secondary" onClick={() => addMultipleRows(5)}>
+              5行を追加
+            </Button>
+            <Button color="grey" onClick={() => handleImportCSV()}>
+              CSVで一括取り込む
+            </Button>
           </>
         }
       />
@@ -472,7 +474,7 @@ function EditableProductTable({
                       className={cn(
                         "w-full h-full !p-2 !border-0 !rounded-none focus:!ring-1 focus:!ring-inset focus:!ring-primary truncate",
                         row.priceType === "custom" &&
-                        "!h-8 !py-1 border-b border-gray-300"
+                          "!h-8 !py-1 border-b border-gray-300"
                       )}
                       options={[
                         { value: "当店通常価格", label: "当店通常価格" },
@@ -654,10 +656,11 @@ function EditableProductTable({
                   <Table.Td center className="p-1 align-middle">
                     <button
                       onClick={() => deleteRow(row.id)}
-                      className={`p-1 ${rows.length > 1
-                        ? "text-gray-400 hover:text-red-600"
-                        : "text-gray-200 cursor-not-allowed"
-                        }`}
+                      className={`p-1 ${
+                        rows.length > 1
+                          ? "text-gray-400 hover:text-red-600"
+                          : "text-gray-200 cursor-not-allowed"
+                      }`}
                       disabled={rows.length <= 1}
                     >
                       <IconTrash size={20} />
