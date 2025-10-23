@@ -351,14 +351,16 @@ const page = () => {
   }
 
   // Table input
-  const addNavigationRow = () => {
+  const addNavigationRow = (numberRow: number = 1) => {
 
-    let newRow: navigationMenu = {
-      id: navigationList.length + 1,
-      name: "",
-      url: "",
-    };
-    setNavigationList((prev) => [...prev, newRow]);
+    for (let i = 0; i < numberRow; i++) {
+      let newRow: navigationMenu = {
+        id: navigationList.length + 1,
+        name: "",
+        url: "",
+      };
+      setNavigationList((prev) => [...prev, newRow]);
+    }
   };
 
   const deleteNavigationRow = (id: number) => {
@@ -369,14 +371,17 @@ const page = () => {
     });
   };
 
-  const addIconMenuRow = () => {
-    let newRow: iconMenu = {
-      id: iconMenuList.length + 1,
-      img: "",
-      text: "",
-      url: "",
-    };
-    setIconMenuList((prev) => [...prev, newRow]);
+  const addIconMenuRow = (numberRow: number = 1) => {
+
+    for (let i = 0; i < numberRow; i++) {
+      let newRow: iconMenu = {
+        id: iconMenuList.length + 1,
+        img: "",
+        text: "",
+        url: "",
+      };
+      setIconMenuList((prev) => [...prev, newRow]);
+    }
   };
 
   const deleteIconMenuRow = (id: number) => {
@@ -386,13 +391,16 @@ const page = () => {
     });
   };
 
-  const addSuggestKeywordRow = () => {
-    let newRow: suggestKeyword = {
-      id: suggestKeywordList.length + 1,
-      keyword: "",
-      url: "",
-    };
-    setSuggestKeywordList((prev) => [...prev, newRow]);
+  const addSuggestKeywordRow = (numberRow: number = 1) => {
+
+    for (let i = 0; i < numberRow; i++) {
+      let newRow: suggestKeyword = {
+        id: suggestKeywordList.length + 1,
+        keyword: "",
+        url: "",
+      };
+      setSuggestKeywordList((prev) => [...prev, newRow]);
+    }
   };
 
   const deleteSuggestKeywordRow = (id: number) => {
@@ -402,13 +410,15 @@ const page = () => {
     });
   };
 
-  const addSlideRow = () => {
-    let newRow: slide = {
-      id: slideList.length + 1,
-      slideImg: "",
-      url: "",
-    };
-    setSlideList((prev) => [...prev, newRow]);
+  const addSlideRow = (numberRow: number = 1) => {
+    for (let i = 0; i < numberRow; i++) {
+      let newRow: slide = {
+        id: slideList.length + 1,
+        slideImg: "",
+        url: "",
+      };
+      setSlideList((prev) => [...prev, newRow]);
+    }
   };
 
   const deleteSlideRow = (id: number) => {
@@ -437,14 +447,16 @@ const page = () => {
     formik.setFieldValue("awards", newAwards);
   }
 
-  const addFeatureRow = () => {
-    let newRow: feature = {
-      id: featureList.length + 1,
-      img: "",
-      url: "",
-      colWidth: "2",
-    };
-    setFeatureList((prev) => [...prev, newRow]);
+  const addFeatureRow = (numberRow: number = 1) => {
+    for (let i = 0; i < numberRow; i++) {
+      let newRow: feature = {
+        id: featureList.length + 1,
+        img: "",
+        url: "",
+        colWidth: "2",
+      };
+      setFeatureList((prev) => [...prev, newRow]);
+    }
   };
 
   const deleteFeatureRow = (id: number) => {
@@ -569,26 +581,33 @@ const page = () => {
             </CardContent>
           </Card>
           <Card>
-            {/* <CardHeader 
-            title="" 
-            subTitle="" 
-            buttonGroup={
-              <>
-               <Button />
-               <Button />
-               <Button />
-              </>
-            }
-            /> */}
             <CardHeader title='2. メニュー設定' />
             <CardContent>
-              <label
-                htmlFor={""}
-                className={cn(
-                  'block text-sm font-medium text-gray-800 mb-1',
-                )}>
-                ナビゲーションメニュー
-              </label>
+              <div className='flex items-center justify-between mb-2'>
+                <label
+                  htmlFor={""}
+                  className={cn(
+                    'block text-sm font-medium text-gray-800',
+                  )}>
+                  ナビゲーションメニュー
+                </label>
+                <div className='flex gap-2'>
+                  <Button
+                    color='primary'
+                    size='sm'
+                    onClick={() => addNavigationRow(1)}
+                  >
+                    行を追加
+                  </Button>
+                  <Button
+                    color='secondary'
+                    size='sm'
+                    onClick={() => addNavigationRow(5)}
+                  >
+                    5行追加
+                  </Button>
+                </div>
+              </div>
               <Table.Container>
                 <Table.Head>
                   <Table.Row>
@@ -636,21 +655,32 @@ const page = () => {
                   ))}
                 </Table.Body>
               </Table.Container>
-              <Button
-                color='secondary'
-                size='sm'
-                onClick={() => addNavigationRow()}
-              >
-                ナビゲーションを追加
-              </Button>
+              <div className='flex items-center justify-between mb-2'>
+                <label
+                  htmlFor={""}
+                  className={cn(
+                    'block text-sm font-medium text-gray-800',
+                  )}>
+                  アイコン付きメニュー
+                </label>
+                <div className='flex gap-2'>
+                  <Button
+                    color='primary'
+                    size='sm'
+                    onClick={() => addIconMenuRow(1)}
+                  >
+                    行を追加
+                  </Button>
+                  <Button
+                    color='secondary'
+                    size='sm'
+                    onClick={() => addIconMenuRow(5)}
+                  >
+                    5行追加
+                  </Button>
+                </div>
+              </div>
 
-              <label
-                htmlFor={""}
-                className={cn(
-                  'block text-sm font-medium text-gray-800 mb-1',
-                )}>
-                アイコン付きメニュー
-              </label>
               <Table.Container>
                 <Table.Head>
                   <Table.Row>
@@ -710,21 +740,32 @@ const page = () => {
                   ))}
                 </Table.Body>
               </Table.Container>
-              <Button
-                color='secondary'
-                size='sm'
-                onClick={() => addIconMenuRow()}
-              >
-                アイコンメニューを追加
-              </Button>
+              <div className='flex items-center justify-between mb-2'>
+                <label
+                  htmlFor={""}
+                  className={cn(
+                    'block text-sm font-medium text-gray-800',
+                  )}>
+                  注目キーワード
+                </label>
+                <div className='flex gap-2'>
+                  <Button
+                    color='primary'
+                    size='sm'
+                    onClick={() => addSuggestKeywordRow(1)}
+                  >
+                    行を追加
+                  </Button>
+                  <Button
+                    color='secondary'
+                    size='sm'
+                    onClick={() => addSuggestKeywordRow(5)}
+                  >
+                    5行追加
+                  </Button>
+                </div>
+              </div>
 
-              <label
-                htmlFor={""}
-                className={cn(
-                  'block text-sm font-medium text-gray-800 mb-1',
-                )}>
-                注目キーワード
-              </label>
               <Table.Container>
                 <Table.Head>
                   <Table.Row>
@@ -772,26 +813,38 @@ const page = () => {
                   ))}
                 </Table.Body>
               </Table.Container>
-              <Button
-                color='secondary'
-                size='sm'
-                onClick={() => addSuggestKeywordRow()}
-              >
-                キーワードを追加
-              </Button>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader title='3. バナー設定' />
             <CardContent>
-              <label
-                htmlFor={""}
-                className={cn(
-                  'block text-sm font-medium text-gray-800 mb-1',
-                )}>
-                スライドバナー
-              </label>
+              <div className='flex items-center justify-between mb-2'>
+                <label
+                  htmlFor={""}
+                  className={cn(
+                    'block text-sm font-medium text-gray-800',
+                  )}>
+                  スライドバナー
+                </label>
+                <div className='flex gap-2'>
+                  <Button
+                    color='primary'
+                    size='sm'
+                    onClick={() => addSlideRow(1)}
+                  >
+                    行を追加
+                  </Button>
+                  <Button
+                    color='secondary'
+                    size='sm'
+                    onClick={() => addSlideRow(5)}
+                  >
+                    5行追加
+                  </Button>
+                </div>
+              </div>
+
               <Table.Container>
                 <Table.Head>
                   <Table.Row>
@@ -838,13 +891,6 @@ const page = () => {
                   ))}
                 </Table.Body>
               </Table.Container>
-              <Button
-                color='secondary'
-                size='sm'
-                onClick={() => addSlideRow()}
-              >
-                スライドを追加
-              </Button>
             </CardContent>
           </Card>
 
@@ -865,6 +911,22 @@ const page = () => {
                 error={formik.errors.featureTitle}
                 touched={formik.touched.featureTitle}
               />
+              <div className='flex justify-end gap-2 mb-2'>
+                <Button
+                  color='primary'
+                  size='sm'
+                  onClick={() => addNavigationRow()}
+                >
+                  行を追加
+                </Button>
+                <Button
+                  color='secondary'
+                  size='sm'
+                  onClick={() => addNavigationRow()}
+                >
+                  5行追加
+                </Button>
+              </div>
               <Table.Container>
                 <Table.Head>
                   <Table.Row>
