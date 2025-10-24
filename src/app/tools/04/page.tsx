@@ -537,7 +537,7 @@ const page = () => {
                           disabled={formik.values.awards.length === 1 ? true : false}
                           onClick={() => deleteInputAwardImg(index)}
                         >
-                          削除
+                          <IconTrash size={20} />
                         </Button>
                       }
                       error={Array.isArray(formik.errors.awards) ? formik.errors.awards[index] : undefined}
@@ -559,19 +559,12 @@ const page = () => {
             </CardContent>
           </Card>
           <Card>
-            <CardHeader title='2. メニュー設定' />
-            <CardContent>
-              <div className='flex items-center justify-between mb-2'>
-                <label
-                  htmlFor={""}
-                  className={cn(
-                    'block text-sm font-medium text-gray-800',
-                  )}>
-                  ナビゲーションメニュー
-                </label>
-                <div className='flex gap-2'>
+            <CardHeader
+              title='2. ナビゲーションメニュー設定'
+              buttonGroup={
+                <>
                   <Button
-                    color='primary'
+                    color='secondary'
                     size='sm'
                     onClick={() => addNavigationRow(1)}
                   >
@@ -584,8 +577,10 @@ const page = () => {
                   >
                     5行追加
                   </Button>
-                </div>
-              </div>
+                </>
+              }
+            />
+            <CardContent>
               <Table.Container>
                 <Table.Head>
                   <Table.Row>
@@ -623,27 +618,21 @@ const page = () => {
                         }}
                       />
                       <Table.Button onClick={() => deleteNavigationRow(item.id)}>
-                        <IconTrash
-                          size={20}
-                          strokeWidth={0.5}
-                          color='black'
-                        />
+                        <IconTrash size={20} />
                       </Table.Button>
                     </Table.Row>
                   ))}
                 </Table.Body>
               </Table.Container>
-              <div className='flex items-center justify-between mb-2'>
-                <label
-                  htmlFor={""}
-                  className={cn(
-                    'block text-sm font-medium text-gray-800',
-                  )}>
-                  アイコン付きメニュー
-                </label>
-                <div className='flex gap-2'>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader
+              title='3.アイコン付きメニュー設定'
+              buttonGroup={
+                <>
                   <Button
-                    color='primary'
+                    color='secondary'
                     size='sm'
                     onClick={() => addIconMenuRow(1)}
                   >
@@ -656,9 +645,10 @@ const page = () => {
                   >
                     5行追加
                   </Button>
-                </div>
-              </div>
-
+                </>
+              }
+            />
+            <CardContent>
               <Table.Container>
                 <Table.Head>
                   <Table.Row>
@@ -708,27 +698,21 @@ const page = () => {
                         }}
                       />
                       <Table.Button onClick={() => deleteIconMenuRow(item.id)}>
-                        <IconTrash
-                          size={20}
-                          strokeWidth={0.5}
-                          color='black'
-                        />
+                        <IconTrash size={20} />
                       </Table.Button>
                     </Table.Row>
                   ))}
                 </Table.Body>
               </Table.Container>
-              <div className='flex items-center justify-between mb-2'>
-                <label
-                  htmlFor={""}
-                  className={cn(
-                    'block text-sm font-medium text-gray-800',
-                  )}>
-                  注目キーワード
-                </label>
-                <div className='flex gap-2'>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader
+              title='4. 注目キーワード設定'
+              buttonGroup={
+                <>
                   <Button
-                    color='primary'
+                    color='secondary'
                     size='sm'
                     onClick={() => addSuggestKeywordRow(1)}
                   >
@@ -741,9 +725,10 @@ const page = () => {
                   >
                     5行追加
                   </Button>
-                </div>
-              </div>
-
+                </>
+              }
+            />
+            <CardContent>
               <Table.Container>
                 <Table.Head>
                   <Table.Row>
@@ -781,11 +766,7 @@ const page = () => {
                         }}
                       />
                       <Table.Button onClick={() => deleteSuggestKeywordRow(item.id)}>
-                        <IconTrash
-                          size={20}
-                          strokeWidth={0.5}
-                          color='black'
-                        />
+                        <IconTrash size={20} />
                       </Table.Button>
                     </Table.Row>
                   ))}
@@ -795,19 +776,12 @@ const page = () => {
           </Card>
 
           <Card>
-            <CardHeader title='3. バナー設定' />
-            <CardContent>
-              <div className='flex items-center justify-between mb-2'>
-                <label
-                  htmlFor={""}
-                  className={cn(
-                    'block text-sm font-medium text-gray-800',
-                  )}>
-                  スライドバナー
-                </label>
-                <div className='flex gap-2'>
+            <CardHeader
+              title='5. スライドバナー設定'
+              buttonGroup={
+                <>
                   <Button
-                    color='primary'
+                    color='secondary'
                     size='sm'
                     onClick={() => addSlideRow(1)}
                   >
@@ -820,9 +794,10 @@ const page = () => {
                   >
                     5行追加
                   </Button>
-                </div>
-              </div>
-
+                </>
+              }
+            />
+            <CardContent>
               <Table.Container>
                 <Table.Head>
                   <Table.Row>
@@ -859,11 +834,7 @@ const page = () => {
                         }}
                       />
                       <Table.Button onClick={() => deleteSlideRow(item.id)}>
-                        <IconTrash
-                          size={20}
-                          strokeWidth={0.5}
-                          color='black'
-                        />
+                        <IconTrash size={20} />
                       </Table.Button>
                     </Table.Row>
                   ))}
@@ -873,7 +844,7 @@ const page = () => {
           </Card>
 
           <Card>
-            <CardHeader title='4. 特集設定' />
+            <CardHeader title='6. 特集設定' />
             <CardContent>
               <TextBox
                 id="featureTitle"
@@ -891,7 +862,7 @@ const page = () => {
               />
               <div className='flex justify-end gap-2 mb-2'>
                 <Button
-                  color='primary'
+                  color='secondary'
                   size='sm'
                   onClick={() => addFeatureRow(1)}
                 >
@@ -961,11 +932,7 @@ const page = () => {
                       <Table.Button
                         onClick={() => deleteFeatureRow(item.id)}
                       >
-                        <IconTrash
-                          size={20}
-                          strokeWidth={0.5}
-                          color='black'
-                        />
+                        <IconTrash size={20} />
                       </Table.Button>
                     </Table.Row>
                   ))}
