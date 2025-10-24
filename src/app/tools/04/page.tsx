@@ -11,6 +11,7 @@ import SelectBox from '../../../component/common/SelectBox'
 import { FormikProvider, FormikValues, useFormik } from "formik";
 import * as Yup from 'yup';
 import Label from '@/component/common/Label'
+import ColorPicker from '@/component/common/ColorPicker'
 
 type navigationMenu = {
   id: number,
@@ -467,10 +468,6 @@ const page = () => {
     });
   };
 
-  useEffect(() => {
-    console.log(featureList)
-  }, [featureList])
-
   return (
     <>
       <FormikProvider value={formik}>
@@ -507,33 +504,14 @@ const page = () => {
                     error={formik.errors.storeLogoUrl}
                     touched={formik.touched.storeLogoUrl}
                   />
-                  <Label htmlFor='hexColor'>
-                    メインカラー
-                  </Label>
-                  <input
-                    id={"hexColor"}
-                    name={"hexColor"}
-                    type='color'
+                  <ColorPicker
+                    id='hexColor'
+                    name='hexColor'
                     value={formik.values.hexColor}
-                    className={cn(
-                      "h-10 w-32 rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm mb-2",
-                      "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 focus:border-red-500",
-                      "disabled:cursor-not-allowed disabled:bg-gray-100",
-                    )}
-                    onChange={formik.handleChange}
+                    onColorChange={(color) => {
+                      formik.setFieldValue("hexColor", color);
+                    }}
                   />
-                  <div className="flex items-center space-x-2 mb-3">
-                    {selectColorList?.map((color, index) => (
-                      <div key={index} className="w-8 h-8 rounded-full cursor-pointer shadow-md"
-                        style={{ backgroundColor: color }}
-                        onClick={() => selectColor(color)}
-                      />
-                    ))}
-                  </div>
-                  <span className="font-mono">HEX: {formik.values.hexColor}</span>
-                  {formik.touched.hexColor && formik.errors.hexColor && (
-                    <p className="text-red-500 text-sm">{formik.errors.hexColor}</p>
-                  )}
                 </div>
                 {/* 基本設定 Col 2  */}
                 <div>
@@ -559,7 +537,7 @@ const page = () => {
                           disabled={formik.values.awards.length === 1 ? true : false}
                           onClick={() => deleteInputAwardImg(index)}
                         >
-                          削除
+                          <IconTrash size={20} />
                         </Button>
                       }
                       error={Array.isArray(formik.errors.awards) ? formik.errors.awards[index] : undefined}
@@ -581,19 +559,12 @@ const page = () => {
             </CardContent>
           </Card>
           <Card>
-            <CardHeader title='2. メニュー設定' />
-            <CardContent>
-              <div className='flex items-center justify-between mb-2'>
-                <label
-                  htmlFor={""}
-                  className={cn(
-                    'block text-sm font-medium text-gray-800',
-                  )}>
-                  ナビゲーションメニュー
-                </label>
-                <div className='flex gap-2'>
+            <CardHeader
+              title='2. ナビゲーションメニュー設定'
+              buttonGroup={
+                <>
                   <Button
-                    color='primary'
+                    color='secondary'
                     size='sm'
                     onClick={() => addNavigationRow(1)}
                   >
@@ -606,8 +577,10 @@ const page = () => {
                   >
                     5行追加
                   </Button>
-                </div>
-              </div>
+                </>
+              }
+            />
+            <CardContent>
               <Table.Container>
                 <Table.Head>
                   <Table.Row>
@@ -645,27 +618,21 @@ const page = () => {
                         }}
                       />
                       <Table.Button onClick={() => deleteNavigationRow(item.id)}>
-                        <IconTrash
-                          size={20}
-                          strokeWidth={0.5}
-                          color='black'
-                        />
+                        <IconTrash size={20} />
                       </Table.Button>
                     </Table.Row>
                   ))}
                 </Table.Body>
               </Table.Container>
-              <div className='flex items-center justify-between mb-2'>
-                <label
-                  htmlFor={""}
-                  className={cn(
-                    'block text-sm font-medium text-gray-800',
-                  )}>
-                  アイコン付きメニュー
-                </label>
-                <div className='flex gap-2'>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader
+              title='3.アイコン付きメニュー設定'
+              buttonGroup={
+                <>
                   <Button
-                    color='primary'
+                    color='secondary'
                     size='sm'
                     onClick={() => addIconMenuRow(1)}
                   >
@@ -678,9 +645,10 @@ const page = () => {
                   >
                     5行追加
                   </Button>
-                </div>
-              </div>
-
+                </>
+              }
+            />
+            <CardContent>
               <Table.Container>
                 <Table.Head>
                   <Table.Row>
@@ -730,27 +698,21 @@ const page = () => {
                         }}
                       />
                       <Table.Button onClick={() => deleteIconMenuRow(item.id)}>
-                        <IconTrash
-                          size={20}
-                          strokeWidth={0.5}
-                          color='black'
-                        />
+                        <IconTrash size={20} />
                       </Table.Button>
                     </Table.Row>
                   ))}
                 </Table.Body>
               </Table.Container>
-              <div className='flex items-center justify-between mb-2'>
-                <label
-                  htmlFor={""}
-                  className={cn(
-                    'block text-sm font-medium text-gray-800',
-                  )}>
-                  注目キーワード
-                </label>
-                <div className='flex gap-2'>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader
+              title='4. 注目キーワード設定'
+              buttonGroup={
+                <>
                   <Button
-                    color='primary'
+                    color='secondary'
                     size='sm'
                     onClick={() => addSuggestKeywordRow(1)}
                   >
@@ -763,9 +725,10 @@ const page = () => {
                   >
                     5行追加
                   </Button>
-                </div>
-              </div>
-
+                </>
+              }
+            />
+            <CardContent>
               <Table.Container>
                 <Table.Head>
                   <Table.Row>
@@ -803,11 +766,7 @@ const page = () => {
                         }}
                       />
                       <Table.Button onClick={() => deleteSuggestKeywordRow(item.id)}>
-                        <IconTrash
-                          size={20}
-                          strokeWidth={0.5}
-                          color='black'
-                        />
+                        <IconTrash size={20} />
                       </Table.Button>
                     </Table.Row>
                   ))}
@@ -817,19 +776,12 @@ const page = () => {
           </Card>
 
           <Card>
-            <CardHeader title='3. バナー設定' />
-            <CardContent>
-              <div className='flex items-center justify-between mb-2'>
-                <label
-                  htmlFor={""}
-                  className={cn(
-                    'block text-sm font-medium text-gray-800',
-                  )}>
-                  スライドバナー
-                </label>
-                <div className='flex gap-2'>
+            <CardHeader
+              title='5. スライドバナー設定'
+              buttonGroup={
+                <>
                   <Button
-                    color='primary'
+                    color='secondary'
                     size='sm'
                     onClick={() => addSlideRow(1)}
                   >
@@ -842,9 +794,10 @@ const page = () => {
                   >
                     5行追加
                   </Button>
-                </div>
-              </div>
-
+                </>
+              }
+            />
+            <CardContent>
               <Table.Container>
                 <Table.Head>
                   <Table.Row>
@@ -881,11 +834,7 @@ const page = () => {
                         }}
                       />
                       <Table.Button onClick={() => deleteSlideRow(item.id)}>
-                        <IconTrash
-                          size={20}
-                          strokeWidth={0.5}
-                          color='black'
-                        />
+                        <IconTrash size={20} />
                       </Table.Button>
                     </Table.Row>
                   ))}
@@ -895,7 +844,7 @@ const page = () => {
           </Card>
 
           <Card>
-            <CardHeader title='4. 特集設定' />
+            <CardHeader title='6. 特集設定' />
             <CardContent>
               <TextBox
                 id="featureTitle"
@@ -913,7 +862,7 @@ const page = () => {
               />
               <div className='flex justify-end gap-2 mb-2'>
                 <Button
-                  color='primary'
+                  color='secondary'
                   size='sm'
                   onClick={() => addFeatureRow(1)}
                 >
@@ -983,11 +932,7 @@ const page = () => {
                       <Table.Button
                         onClick={() => deleteFeatureRow(item.id)}
                       >
-                        <IconTrash
-                          size={20}
-                          strokeWidth={0.5}
-                          color='black'
-                        />
+                        <IconTrash size={20} />
                       </Table.Button>
                     </Table.Row>
                   ))}

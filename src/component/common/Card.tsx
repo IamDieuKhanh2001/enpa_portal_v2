@@ -28,7 +28,7 @@ Card.displayName = "Card";
 // Card header
 interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
     title: string;
-    description?: string;
+    description?: React.ReactNode;
     classNameHeader?: string;
     classNameTitle?: string;
     classNameDescription?: string;

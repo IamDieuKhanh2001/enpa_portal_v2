@@ -1,6 +1,6 @@
 import React from "react";
 import { cn } from "../../lib/utils";
-import { IconTrash } from "@tabler/icons-react";
+import { IconAlertCircle, IconTrash } from "@tabler/icons-react";
 
 // ==================== Container ====================
 const TableContainer = React.forwardRef<
@@ -8,7 +8,7 @@ const TableContainer = React.forwardRef<
   React.HTMLAttributes<HTMLDivElement>
 >(({ children, className, ...props }, ref) => (
   <div
-    className={cn("w-full overflow-x-auto bg-white mb-1", className)}
+    className={cn("w-full overflow-x-hidden bg-white mb-1", className)}
     {...props}
     ref={ref}
   >
@@ -108,21 +108,38 @@ const TableCell: React.FC<TableCellProps> = ({
 );
 
 // ==================== InputCell ====================
-interface TableInputCellProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {}
+interface TableInputCellProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  errorMsg?: string,
+}
 const TableInputCell: React.FC<TableInputCellProps> = ({
   className,
+  errorMsg = "",
   ...props
 }) => (
-  <td className="border text-center">
-    <input
-      {...props}
-      className={cn(
-        "w-full h-10 bg-transparent px-2 py-2 text-sm text-black placeholder-gray-400",
-        "focus:outline focus:outline-2 focus:outline-[#e6372e]",
-        className
+  <td className="border">
+    <div className="flex items-center">
+      <input
+        {...props}
+        className={cn(
+          "w-full h-10 bg-transparent px-2 py-2 text-sm text-black placeholder-gray-400",
+          "focus:outline focus:outline-2 focus:outline-[#e6372e]",
+          className,
+        )}
+      />
+      {errorMsg && (
+        <div className="group relative flex items-center pr-2">
+          <IconAlertCircle size={16} className="text-red-500 cursor-pointer" />
+          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 
+                  max-w-xs w-max bg-red-100 text-red-800 text-xs rounded-md px-2 py-1 shadow-md z-10 break-words">
+            Đây là thông báo lỗi! scsacascascascascascascascas
+            Đây là thông báo lỗi! scsacascascascascascascascas
+            Đây là thông báo lỗi! scsacascascascascascascascas
+            Đây là thông báo lỗi! scsacascascascascascascascas
+            Đây là thông báo lỗi! scsacascascascascascascascas
+          </div>
+        </div>
       )}
-    />
+    </div>
   </td>
 );
 
@@ -130,8 +147,8 @@ const TableInputCell: React.FC<TableInputCellProps> = ({
 interface TableSelectProps
   extends React.SelectHTMLAttributes<HTMLSelectElement> {
   children:
-    | React.ReactElement<typeof TableSelectOption>
-    | React.ReactElement<typeof TableSelectOption>[];
+  | React.ReactElement<typeof TableSelectOption>
+  | React.ReactElement<typeof TableSelectOption>[];
 }
 const TableSelect: React.FC<TableSelectProps> = ({
   className,

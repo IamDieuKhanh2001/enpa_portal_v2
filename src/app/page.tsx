@@ -360,6 +360,25 @@ export default function Home() {
             <Table.Row>
               <Table.Th>商品名</Table.Th>
               <Table.Th>価格</Table.Th>
+              <Table.Th>価格</Table.Th>
+              <Table.Th>価格</Table.Th>
+              <Table.Th>価格</Table.Th>
+              <Table.Th>価格</Table.Th>
+              <Table.Th>価格</Table.Th>
+              <Table.Th>価格</Table.Th>
+              <Table.Th>価格</Table.Th>
+              <Table.Th>価格</Table.Th>
+              <Table.Th>価格</Table.Th>
+              <Table.Th>価格</Table.Th>
+              <Table.Th>価格</Table.Th>
+              <Table.Th>価格</Table.Th>
+              <Table.Th>価格</Table.Th>
+              <Table.Th>価格</Table.Th>
+              <Table.Th>価格</Table.Th>
+              <Table.Th>価格</Table.Th>
+              <Table.Th>価格</Table.Th>
+              <Table.Th>価格</Table.Th>
+              <Table.Th>価格</Table.Th>
             </Table.Row>
           </Table.Head>
 
@@ -367,7 +386,44 @@ export default function Home() {
             <Table.Row>
               <Table.Td position="left">りんご</Table.Td>
               <Table.InputCell
-
+              />
+              <Table.InputCell
+              />
+              <Table.InputCell
+              />
+              <Table.InputCell
+              />
+              <Table.InputCell
+              />
+              <Table.InputCell
+              />
+              <Table.InputCell
+              />
+              <Table.InputCell
+              />
+              <Table.InputCell
+              />
+              <Table.InputCell
+              />
+              <Table.InputCell
+              />
+              <Table.InputCell
+              />
+              <Table.InputCell
+              />
+              <Table.InputCell
+              />
+              <Table.InputCell
+              />
+              <Table.InputCell
+              />
+              <Table.InputCell
+              />
+              <Table.InputCell
+              />
+              <Table.InputCell
+              />
+              <Table.InputCell
               />
             </Table.Row>
           </Table.Body>
