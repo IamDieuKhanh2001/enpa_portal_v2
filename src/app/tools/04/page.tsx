@@ -11,6 +11,7 @@ import SelectBox from '../../../component/common/SelectBox'
 import { FormikProvider, FormikValues, useFormik } from "formik";
 import * as Yup from 'yup';
 import Label from '@/component/common/Label'
+import ColorPicker from '@/component/common/ColorPicker'
 
 type navigationMenu = {
   id: number,
@@ -467,10 +468,6 @@ const page = () => {
     });
   };
 
-  useEffect(() => {
-    console.log(featureList)
-  }, [featureList])
-
   return (
     <>
       <FormikProvider value={formik}>
@@ -507,33 +504,14 @@ const page = () => {
                     error={formik.errors.storeLogoUrl}
                     touched={formik.touched.storeLogoUrl}
                   />
-                  <Label htmlFor='hexColor'>
-                    メインカラー
-                  </Label>
-                  <input
-                    id={"hexColor"}
-                    name={"hexColor"}
-                    type='color'
+                  <ColorPicker
+                    id='hexColor'
+                    name='hexColor'
                     value={formik.values.hexColor}
-                    className={cn(
-                      "h-10 w-32 rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm mb-2",
-                      "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 focus:border-red-500",
-                      "disabled:cursor-not-allowed disabled:bg-gray-100",
-                    )}
-                    onChange={formik.handleChange}
+                    onColorChange={(color) => {
+                      formik.setFieldValue("hexColor", color);
+                    }}
                   />
-                  <div className="flex items-center space-x-2 mb-3">
-                    {selectColorList?.map((color, index) => (
-                      <div key={index} className="w-8 h-8 rounded-full cursor-pointer shadow-md"
-                        style={{ backgroundColor: color }}
-                        onClick={() => selectColor(color)}
-                      />
-                    ))}
-                  </div>
-                  <span className="font-mono">HEX: {formik.values.hexColor}</span>
-                  {formik.touched.hexColor && formik.errors.hexColor && (
-                    <p className="text-red-500 text-sm">{formik.errors.hexColor}</p>
-                  )}
                 </div>
                 {/* 基本設定 Col 2  */}
                 <div>

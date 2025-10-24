@@ -42,7 +42,7 @@ const TextBox = React.forwardRef<HTMLInputElement, TextBoxProps>(
     return (
       <>
         <div className={cn(
-          "flex mb-2",
+          "flex mb-3",
           direction === "vertical" ? "flex-col gap-1" : "items-center gap-3"
         )}>
           {showLabel && (
