@@ -1,16 +1,14 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Card, CardContent, CardHeader } from '../../../component/common/Card'
 import { TextBox } from '../../../component/common/TextBox'
-import { cn } from '../../../lib/utils'
 import { Button } from '../../../component/common/Button'
 import { Table } from '../../../component/common/Table'
 import { IconTrash } from '@tabler/icons-react'
 import SelectBox from '../../../component/common/SelectBox'
-import { FormikProvider, FormikValues, useFormik } from "formik";
+import { FormikProvider, useFormik } from "formik";
 import * as Yup from 'yup';
-import Label from '@/component/common/Label'
 import ColorPicker from '@/component/common/ColorPicker'
 
 type navigationMenu = {
@@ -346,26 +344,22 @@ const page = () => {
     window.open("/tools/04/review", "_blank");
   }
 
-  const selectColor = (color: string) => {
-
-    formik.setFieldValue("hexColor", color)
-  }
-
   // Table input
   const addNavigationRow = (numberRow: number = 1) => {
-
-    for (let i = 0; i < numberRow; i++) {
-      let newRow: navigationMenu = {
-        id: navigationList.length + 1,
-        name: "",
-        url: "",
-      };
-      setNavigationList((prev) => [...prev, newRow]);
-    }
+    setNavigationList((prev) => {
+      const newRows: navigationMenu[] = [];
+      for (let i = 0; i < numberRow; i++) {
+        newRows.push({
+          id: prev.length + i + 1,
+          name: "",
+          url: "",
+        });
+      }
+      return [...prev, ...newRows];
+    });
   };
 
   const deleteNavigationRow = (id: number) => {
-
     setNavigationList((prev) => {
       const filtered = prev.filter((r) => r.id !== id);
       return filtered.map((r, index) => ({ ...r, id: index + 1 }));
@@ -373,16 +367,18 @@ const page = () => {
   };
 
   const addIconMenuRow = (numberRow: number = 1) => {
-
-    for (let i = 0; i < numberRow; i++) {
-      let newRow: iconMenu = {
-        id: iconMenuList.length + 1,
-        img: "",
-        text: "",
-        url: "",
-      };
-      setIconMenuList((prev) => [...prev, newRow]);
-    }
+    setIconMenuList((prev) => {
+      const newRows: iconMenu[] = [];
+      for (let i = 0; i < numberRow; i++) {
+        newRows.push({
+          id: prev.length + i + 1,
+          img: "",
+          text: "",
+          url: "",
+        });
+      }
+      return [...prev, ...newRows];
+    });
   };
 
   const deleteIconMenuRow = (id: number) => {
@@ -393,15 +389,17 @@ const page = () => {
   };
 
   const addSuggestKeywordRow = (numberRow: number = 1) => {
-
-    for (let i = 0; i < numberRow; i++) {
-      let newRow: suggestKeyword = {
-        id: suggestKeywordList.length + 1,
-        keyword: "",
-        url: "",
-      };
-      setSuggestKeywordList((prev) => [...prev, newRow]);
-    }
+    setSuggestKeywordList((prev) => {
+      const newRows: suggestKeyword[] = [];
+      for (let i = 0; i < numberRow; i++) {
+        newRows.push({
+          id: prev.length + i + 1,
+          keyword: "",
+          url: "",
+        });
+      }
+      return [...prev, ...newRows]
+    })
   };
 
   const deleteSuggestKeywordRow = (id: number) => {
@@ -412,14 +410,17 @@ const page = () => {
   };
 
   const addSlideRow = (numberRow: number = 1) => {
-    for (let i = 0; i < numberRow; i++) {
-      let newRow: slide = {
-        id: slideList.length + 1,
-        slideImg: "",
-        url: "",
-      };
-      setSlideList((prev) => [...prev, newRow]);
-    }
+    setSlideList((prev) => {
+      const newRows: slide[] = [];
+      for (let i = 0; i < numberRow; i++) {
+        newRows.push({
+          id: prev.length + i + 1,
+          slideImg: "",
+          url: "",
+        });
+      }
+      return [...prev, ...newRows]
+    })
   };
 
   const deleteSlideRow = (id: number) => {
@@ -449,15 +450,18 @@ const page = () => {
   }
 
   const addFeatureRow = (numberRow: number = 1) => {
-    for (let i = 0; i < numberRow; i++) {
-      let newRow: feature = {
-        id: featureList.length + 1,
-        img: "",
-        url: "",
-        colWidth: "2",
-      };
-      setFeatureList((prev) => [...prev, newRow]);
-    }
+    setFeatureList((prev) => {
+      const newRows: feature[] = [];
+      for (let i = 0; i < numberRow; i++) {
+        newRows.push({
+          id: prev.length + i + 1,
+          img: "",
+          url: "",
+          colWidth: "2",
+        });
+      }
+      return [...prev, ...newRows]
+    })
   };
 
   const deleteFeatureRow = (id: number) => {
@@ -470,6 +474,7 @@ const page = () => {
 
   return (
     <>
+      <h1 className="text-2xl mb-4 font-bold text-gray-800">PC用ヘッダー作成</h1>
       <FormikProvider value={formik}>
         <form onSubmit={formik.handleSubmit}>
           <Card>
@@ -584,6 +589,7 @@ const page = () => {
               <Table.Container>
                 <Table.Head>
                   <Table.Row>
+                    <Table.Th width='w-24'>ID</Table.Th>
                     <Table.Th>項目名</Table.Th>
                     <Table.Th>リンク先URL</Table.Th>
                     <Table.Th>削除</Table.Th>
@@ -593,6 +599,7 @@ const page = () => {
                 <Table.Body>
                   {navigationList?.map((item, index) => (
                     <Table.Row key={`navigation-${index}`}>
+                      <Table.Td>{item.id}</Table.Td>
                       <Table.InputCell
                         value={item.name}
                         onChange={(e) => {
@@ -652,6 +659,7 @@ const page = () => {
               <Table.Container>
                 <Table.Head>
                   <Table.Row>
+                    <Table.Th width='w-24'>ID</Table.Th>
                     <Table.Th>画像URL</Table.Th>
                     <Table.Th>リンク先URL</Table.Th>
                     <Table.Th>テキスト</Table.Th>
@@ -661,6 +669,7 @@ const page = () => {
                 <Table.Body>
                   {iconMenuList?.map((item, index) => (
                     <Table.Row key={`iconMenu-${index}`}>
+                      <Table.Td>{item.id}</Table.Td>
                       <Table.InputCell
                         value={item.img}
                         onChange={(e) => {
@@ -732,15 +741,16 @@ const page = () => {
               <Table.Container>
                 <Table.Head>
                   <Table.Row>
+                    <Table.Th width='w-24'>ID</Table.Th>
                     <Table.Th>キーワード</Table.Th>
                     <Table.Th>検索URL</Table.Th>
                     <Table.Th>削除</Table.Th>
                   </Table.Row>
                 </Table.Head>
-
                 <Table.Body>
                   {suggestKeywordList?.map((item, index) => (
                     <Table.Row key={`keyword-${index}`}>
+                      <Table.Td>{item.id}</Table.Td>
                       <Table.InputCell
                         value={item.keyword}
                         onChange={(e) => {
@@ -801,6 +811,7 @@ const page = () => {
               <Table.Container>
                 <Table.Head>
                   <Table.Row>
+                    <Table.Th width='w-24'>ID</Table.Th>
                     <Table.Th>スライドバナー画像URL</Table.Th>
                     <Table.Th>リンク先URL</Table.Th>
                     <Table.Th>削除</Table.Th>
@@ -809,6 +820,7 @@ const page = () => {
                 <Table.Body>
                   {slideList?.map((item, index) => (
                     <Table.Row key={`slide-${index}`}>
+                      <Table.Td>{item.id}</Table.Td>
                       <Table.InputCell
                         value={item.slideImg}
                         onChange={(e) => {
@@ -860,6 +872,57 @@ const page = () => {
                 error={formik.errors.featureTitle}
                 touched={formik.touched.featureTitle}
               />
+              <div className='flex items-center gap-2'>
+                <SelectBox
+                  id=''
+                  name=''
+                  label='ボタン有無'
+                  width='sm'
+                  direction='horizontal'
+                  value={showButtonSetting ? "1" : "0"}
+                  options={[
+                    { value: '1', label: '有' },
+                    { value: '0', label: '無' },
+                  ]}
+                  onChange={(e) => {
+                    setShowButtonSettting(e.target.value === "1" ? true : false);
+                  }}
+                />
+                {showButtonSetting &&
+                  (
+                    <>
+                      <TextBox
+                        id="buttonText"
+                        name="buttonText"
+                        type="text"
+                        width='lg'
+                        isRequired={true}
+                        label={"ボタン文言"}
+                        value={formik.values.buttonText}
+                        placeholder="例：楽天に遷移する"
+                        direction="horizontal"
+                        onChange={formik.handleChange}
+                        error={formik.errors.buttonText}
+                        touched={formik.touched.buttonText}
+                      />
+                      <TextBox
+                        id="buttonLink"
+                        name="buttonLink"
+                        type="text"
+                        width='lg'
+                        isRequired={true}
+                        label={"ボタンリンク先"}
+                        value={formik.values.buttonLink}
+                        placeholder="例：https://www.rakuten.co.jp/"
+                        direction="horizontal"
+                        onChange={formik.handleChange}
+                        error={formik.errors.buttonLink}
+                        touched={formik.touched.buttonLink}
+                      />
+                    </>
+                  )
+                }
+              </div>
               <div className='flex justify-end gap-2 mb-2'>
                 <Button
                   color='secondary'
@@ -879,6 +942,7 @@ const page = () => {
               <Table.Container>
                 <Table.Head>
                   <Table.Row>
+                    <Table.Th width='w-24'>ID</Table.Th>
                     <Table.Th>画像URL</Table.Th>
                     <Table.Th>リンク先URL</Table.Th>
                     <Table.Th>画像の横幅</Table.Th>
@@ -888,6 +952,7 @@ const page = () => {
                 <Table.Body>
                   {featureList?.map((item, index) => (
                     <Table.Row key={`feature-${index}`}>
+                      <Table.Td>{item.id}</Table.Td>
                       <Table.InputCell
                         value={item.img}
                         onChange={(e) => {
@@ -938,54 +1003,6 @@ const page = () => {
                   ))}
                 </Table.Body>
               </Table.Container>
-              <SelectBox
-                id=''
-                name=''
-                label='ボタン有無'
-                width='sm'
-                value={showButtonSetting ? "1" : "0"}
-                options={[
-                  { value: '1', label: '有' },
-                  { value: '0', label: '無' },
-                ]}
-                onChange={(e) => {
-                  setShowButtonSettting(e.target.value === "1" ? true : false);
-                }}
-              />
-              {showButtonSetting &&
-                (
-                  <>
-                    <TextBox
-                      id="buttonText"
-                      name="buttonText"
-                      type="text"
-                      width='lg'
-                      isRequired={true}
-                      label={"ボタン文言"}
-                      value={formik.values.buttonText}
-                      placeholder="例：楽天に遷移する"
-                      direction="vertical"
-                      onChange={formik.handleChange}
-                      error={formik.errors.buttonText}
-                      touched={formik.touched.buttonText}
-                    />
-                    <TextBox
-                      id="buttonLink"
-                      name="buttonLink"
-                      type="text"
-                      width='lg'
-                      isRequired={true}
-                      label={"ボタンリンク先"}
-                      value={formik.values.buttonLink}
-                      placeholder="例：https://www.rakuten.co.jp/"
-                      direction="vertical"
-                      onChange={formik.handleChange}
-                      error={formik.errors.buttonLink}
-                      touched={formik.touched.buttonLink}
-                    />
-                  </>
-                )
-              }
             </CardContent>
           </Card>
           <div className='flex justify-center'>
