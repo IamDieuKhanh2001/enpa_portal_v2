@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from '@/component/common/Button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/component/common/Card';
+import { Card, CardContent, CardHeader } from '@/component/common/Card';
 import { IconCheck, IconLoader2 } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react'

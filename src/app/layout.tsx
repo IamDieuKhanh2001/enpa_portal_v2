@@ -3,6 +3,8 @@ import { Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
 import LayoutPortal from "@/layout/LayoutPortal";
 import Providers from "./providers";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const notoSansJp = Noto_Sans_JP({
   subsets: ["latin"],
