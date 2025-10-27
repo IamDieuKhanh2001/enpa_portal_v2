@@ -16,7 +16,7 @@ export default function LayoutPortal(props: LayoutPortalProps) {
       <AppSidebar />
 
       {/* --- Main --- */}
-      <main className="flex-1 overflow-x-hidden overflow-y-auto p-4">
+      <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 pt-0">
         <div className="w-full mx-auto">
           {children}
         </div>

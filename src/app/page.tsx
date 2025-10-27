@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../component/common/Ta
 import { Grid, GridCol, GridRow } from "../component/common/Grid";
 import { Table } from "../component/common/Table";
 import { Badge } from "../component/common/Badge";
+import RadioBox from "@/component/common/RadioBox";
 // import { ErrorMessage, Field, Form, Formik } from 'formik';
 
 export default function Home() {
@@ -55,6 +56,17 @@ export default function Home() {
         </TabsList>
 
         <TabsContent value="tab1">
+          <RadioBox.Group
+            defaultValue="2"
+            horizontal
+            onChange={(value) => console.log("Selected:", value)}
+          >
+            <RadioBox.Option value="1">Option 1</RadioBox.Option>
+            <RadioBox.Option value="2">Option 2</RadioBox.Option>
+            <RadioBox.Option value="3" disabled={true}>
+              Option 3 (Disabled)
+            </RadioBox.Option>
+          </RadioBox.Group>
           <div className="">
             <h1 className="text-2xl font-bold text-gray-800 mb-2">Form test</h1>
             <Card>
