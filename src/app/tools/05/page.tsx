@@ -5,11 +5,24 @@ import { Card, CardContent, CardHeader } from '@/component/common/Card'
 import PageTitle from '@/component/common/PageTitle'
 import RadioBox from '@/component/common/RadioBox'
 import SelectBox from '@/component/common/SelectBox'
+import SliderImage from '@/component/tools/05/SliderImage'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/component/common/Tabs'
 import { TextBox } from '@/component/common/TextBox'
 import React from 'react'
+import Slider from 'react-slick'
 
 const page = () => {
+
+    const settings = {
+        dots: false,
+        infinite: false,
+        speed: 500,
+        slidesToShow: 4,
+        slidesToScroll: 1,
+        autoplay: true,
+        arrows: true,
+    };
+
     return (
         <>
             <PageTitle>ランキング受賞バナー自動掲載</PageTitle>
@@ -22,7 +35,7 @@ const page = () => {
                     <Card>
                         <CardHeader title='1.テンプレート選択' />
                         <CardContent>
-
+                            <SliderImage />
                         </CardContent>
                     </Card>
                     <Card>
@@ -73,7 +86,7 @@ const page = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mt-10">
                                 <div>
                                     <TextBox
-                                        label='PC用 横幅の調整'
+                                        label='スマホ用 横幅の調整'
                                         id=''
                                         name=''
                                         value={""}

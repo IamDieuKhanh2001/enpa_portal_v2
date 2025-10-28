@@ -1,0 +1,73 @@
+/* Tổng thể slider */
+.slick-slider {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Track chứa slide */
+.slick-track {
+  display: flex !important;
+  align-items: center;
+}
+
+/* Mỗi slide */
+.slick-slide {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+/* Hình ảnh trong slide */
+.slick-slide img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  object-fit: contain;
+}
+
+/* Nút điều hướng */
+.slick-prev,
+.slick-next {
+  z-index: 20;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover */
+.slick-prev:hover,
+.slick-next:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Xóa icon gốc */
+.slick-prev::before,
+.slick-next::before {
+  content: "";
+}
+
+/* Tùy chỉnh vị trí */
+.slick-prev {
+  left: 10px;
+}
+.slick-next {
+  right: 10px;
+}
+
+/* Dấu chấm (dots) */
+.slick-dots li button:before {
+  color: #fff !important;
+  opacity: 0.5;
+}
+
+.slick-dots li.slick-active button:before {
+  color: #3b82f6 !important; /* Màu xanh Tailwind */
+  opacity: 1;
+}
