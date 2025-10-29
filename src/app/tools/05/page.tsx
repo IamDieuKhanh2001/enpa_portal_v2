@@ -2,7 +2,6 @@
 
 import { Button } from '@/component/common/Button'
 import { Card, CardContent, CardHeader } from '@/component/common/Card'
-import PageTitle from '@/component/common/PageTitle'
 import RadioBox from '@/component/common/RadioBox'
 import SelectBox from '@/component/common/SelectBox'
 import SliderImage from '@/component/tools/05/SliderImage'
@@ -25,7 +24,6 @@ const page = () => {
 
     return (
         <>
-            <PageTitle>ランキング受賞バナー自動掲載</PageTitle>
             <Tabs defaultTab="tab1">
                 <TabsList>
                     <TabsTrigger value="tab1">ランキング画像設定</TabsTrigger>
