@@ -44,7 +44,7 @@ const page = () => {
   const { setTitle } = useHeader();
 
   useEffect(() => {
-    setTitle("PC用ヘッダー作成");
+    setTitle("楽天GOLD ヘッダー生成");
   }, [setTitle]);
 
   // 2. メニュー設定
@@ -172,7 +172,7 @@ const page = () => {
             .min(1, "必須") // không được để trống
         )
         .min(1, "少なくとも1つ必要です"), // ít nhất 1 phần tử trong mảng
-      featureTitle: Yup.string().trim().required("見出しを入力してください。"),
+      featureTitle: Yup.string().trim(),
       buttonText: showButtonSetting
         ? Yup.string().trim().required("入力してください。")
         : Yup.string().trim(),
@@ -484,7 +484,11 @@ const page = () => {
       <FormikProvider value={formik}>
         <form onSubmit={formik.handleSubmit}>
           <Card>
-            <CardHeader title='1.基本設定' />
+            <CardHeader
+              title='1.基本設定'
+              description="は必須項目です。"
+              showDescAsterisk={true}
+            />
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                 {/* 基本設定 Col 1  */}
@@ -666,6 +670,7 @@ const page = () => {
                 <Table.Head>
                   <Table.Row>
                     <Table.Th width='w-24'>ID</Table.Th>
+                    <Table.Th width='w-24'>画像</Table.Th>
                     <Table.Th>画像URL</Table.Th>
                     <Table.Th>リンク先URL</Table.Th>
                     <Table.Th>テキスト</Table.Th>
@@ -676,6 +681,10 @@ const page = () => {
                   {iconMenuList?.map((item, index) => (
                     <Table.Row key={`iconMenu-${index}`}>
                       <Table.Td>{item.id}</Table.Td>
+                      <Table.ImageCell
+                        src={item.img}
+                        alt='iconMenu'
+                      />
                       <Table.InputCell
                         value={item.img}
                         onChange={(e) => {
@@ -818,7 +827,8 @@ const page = () => {
                 <Table.Head>
                   <Table.Row>
                     <Table.Th width='w-24'>ID</Table.Th>
-                    <Table.Th>スライドバナー画像URL</Table.Th>
+                    <Table.Th width='w-24'>画像</Table.Th>
+                    <Table.Th>画像URL</Table.Th>
                     <Table.Th>リンク先URL</Table.Th>
                     <Table.Th>削除</Table.Th>
                   </Table.Row>
@@ -827,6 +837,10 @@ const page = () => {
                   {slideList?.map((item, index) => (
                     <Table.Row key={`slide-${index}`}>
                       <Table.Td>{item.id}</Table.Td>
+                      <Table.ImageCell
+                        src={item.slideImg}
+                        alt='slide'
+                      />
                       <Table.InputCell
                         value={item.slideImg}
                         onChange={(e) => {
@@ -864,70 +878,76 @@ const page = () => {
           <Card>
             <CardHeader title='6. 特集設定' />
             <CardContent>
-              <TextBox
-                id="featureTitle"
-                name="featureTitle"
-                type="text"
-                width='lg'
-                isRequired={true}
-                label={"見出し"}
-                value={formik.values.featureTitle}
-                placeholder="例：新商品"
-                direction="vertical"
-                onChange={formik.handleChange}
-                error={formik.errors.featureTitle}
-                touched={formik.touched.featureTitle}
-              />
-              <div className='flex items-center gap-2'>
-                <SelectBox
-                  id=''
-                  name=''
-                  label='ボタン有無'
-                  width='sm'
-                  direction='horizontal'
-                  value={showButtonSetting ? "1" : "0"}
-                  options={[
-                    { value: '1', label: '有' },
-                    { value: '0', label: '無' },
-                  ]}
-                  onChange={(e) => {
-                    setShowButtonSettting(e.target.value === "1" ? true : false);
-                  }}
-                />
-                {showButtonSetting &&
-                  (
-                    <>
+              <div className='grid grid-cols-1 md:grid-cols-4 gap-x-4 gap-y-4'>
+                <div>
+                  <TextBox
+                    id="featureTitle"
+                    name="featureTitle"
+                    type="text"
+                    width='full'
+                    label={"見出し"}
+                    value={formik.values.featureTitle}
+                    placeholder="例：新商品"
+                    direction="vertical"
+                    onChange={formik.handleChange}
+                    error={formik.errors.featureTitle}
+                    touched={formik.touched.featureTitle}
+                  />
+                </div>
+                <div>
+                  <SelectBox
+                    id=''
+                    name=''
+                    label='ボタン有無'
+                    width='full'
+                    direction='vertical'
+                    value={showButtonSetting ? "1" : "0"}
+                    options={[
+                      { value: '1', label: '有' },
+                      { value: '0', label: '無' },
+                    ]}
+                    onChange={(e) => {
+                      setShowButtonSettting(e.target.value === "1" ? true : false);
+                    }}
+                  />
+                </div>
+
+                {showButtonSetting && (
+                  <React.Fragment>
+                    <div>
                       <TextBox
                         id="buttonText"
                         name="buttonText"
                         type="text"
-                        width='lg'
+                        width='full'
                         isRequired={true}
                         label={"ボタン文言"}
                         value={formik.values.buttonText}
                         placeholder="例：楽天に遷移する"
-                        direction="horizontal"
+                        direction="vertical"
                         onChange={formik.handleChange}
                         error={formik.errors.buttonText}
                         touched={formik.touched.buttonText}
                       />
+                    </div>
+                    <div>
                       <TextBox
                         id="buttonLink"
                         name="buttonLink"
                         type="text"
-                        width='lg'
+                        width='full'
                         isRequired={true}
                         label={"ボタンリンク先"}
                         value={formik.values.buttonLink}
                         placeholder="例：https://www.rakuten.co.jp/"
-                        direction="horizontal"
+                        direction="vertical"
                         onChange={formik.handleChange}
                         error={formik.errors.buttonLink}
                         touched={formik.touched.buttonLink}
                       />
-                    </>
-                  )
-                }
+                    </div>
+                  </React.Fragment>
+                )}
               </div>
               <div className='flex justify-end gap-2 mb-2'>
                 <Button
@@ -949,6 +969,7 @@ const page = () => {
                 <Table.Head>
                   <Table.Row>
                     <Table.Th width='w-24'>ID</Table.Th>
+                    <Table.Th width='w-24'>画像</Table.Th>
                     <Table.Th>画像URL</Table.Th>
                     <Table.Th>リンク先URL</Table.Th>
                     <Table.Th>画像の横幅</Table.Th>
@@ -959,6 +980,10 @@ const page = () => {
                   {featureList?.map((item, index) => (
                     <Table.Row key={`feature-${index}`}>
                       <Table.Td>{item.id}</Table.Td>
+                      <Table.ImageCell
+                        src={item.img}
+                        alt='slide'
+                      />
                       <Table.InputCell
                         value={item.img}
                         onChange={(e) => {
