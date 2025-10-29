@@ -100,12 +100,12 @@ function PreviewModal({
         {/* Header */}
         <div className="flex justify-between items-center p-4 border-b">
           <h2 className="text-xl font-semibold">画像プレビュー</h2>
-          <button
+          {/* <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700"
           >
             <IconX size={24} />
-          </button>
+          </button> */}
         </div>
 
         {/* Body (Scrollable) */}
