@@ -317,13 +317,13 @@ export default function EditableProductTable({
             <Table.Row>
               <Table.Th width="w-[3%]" center>
                 {" "}
-                #{" "}
+                ID{" "}
               </Table.Th>
               <Table.Th width="w-[9%]">
                 {" "}
                 商品管理番号<span className="text-red-500">*</span>{" "}
               </Table.Th>
-              <Table.Th width="w-[12%]">
+              <Table.Th width="w-[13%]">
                 {" "}
                 テンプレート<span className="text-red-500">*</span>{" "}
               </Table.Th>
@@ -347,7 +347,7 @@ export default function EditableProductTable({
                 {" "}
                 割引表示<span className="text-red-500">*</span>{" "}
               </Table.Th>
-              <Table.Th width="w-[15%]">
+              <Table.Th width="w-[14%]">
                 {" "}
                 セール文言<span className="text-red-500">*</span>{" "}
               </Table.Th>
