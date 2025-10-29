@@ -2,6 +2,7 @@
 
 import React, { ReactNode } from 'react';
 import { ToastContainer } from 'react-toastify';
+import { HeaderProvider } from './context/HeaderContext';
 
 interface Props {
     children: ReactNode
@@ -9,8 +10,10 @@ interface Props {
 const providers = ({ children }: Props) => {
     return (
         <React.Fragment>
-            {children}
-            <ToastContainer />
+            <HeaderProvider>
+                {children}
+                <ToastContainer />
+            </HeaderProvider>
         </React.Fragment>
     )
 }
