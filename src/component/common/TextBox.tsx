@@ -53,7 +53,10 @@ const TextBox = React.forwardRef<HTMLInputElement, TextBoxProps>(
                 direction === "horizontal" && "whitespace-nowrap"
               )}>
               {label}
-              {isRequired === true ? <span className="text-red-500">【必須】</span> : <></>}
+              {isRequired === true ?
+                <span className="text-red-500 mr-1" aria-hidden="true">
+                  *
+                </span> : <></>}
             </label>
           )}
           <div className="flex items-center">

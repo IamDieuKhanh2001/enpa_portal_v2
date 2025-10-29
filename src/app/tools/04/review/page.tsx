@@ -1,5 +1,6 @@
 "use client"
 
+import { useHeader } from '@/app/context/HeaderContext';
 import { Button } from '@/component/common/Button';
 import { Card, CardContent, CardHeader } from '@/component/common/Card';
 import { IconCheck, IconLoader2 } from '@tabler/icons-react';
@@ -15,6 +16,12 @@ const page = () => {
     const router = useRouter();
     const [successUpload, setSuccessUpload] = useState(false);
     const [code, setCode] = useState("");
+
+    const { setTitle } = useHeader();
+
+    useEffect(() => {
+        setTitle("楽天GOLD ヘッダー生成");
+    }, [setTitle]);
 
     const uploadToRakutenGold = async () => {
         try {
@@ -84,7 +91,7 @@ const page = () => {
                     <iframe
                         ref={iframeRef}
                         srcDoc={reviewHtml}
-                        className="w-full h-[600px] border rounded-md"
+                        className="bg-white w-full h-[600px] border rounded-md"
                         sandbox="allow-same-origin allow-scripts allow-popups allow-top-navigation"
                     />
                     <div className="flex justify-center mt-4">

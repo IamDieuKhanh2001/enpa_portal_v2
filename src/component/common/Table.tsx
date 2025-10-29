@@ -96,7 +96,7 @@ const TableCell: React.FC<TableCellProps> = ({
 }) => (
   <td
     className={cn(
-      "border px-2 py-2",
+      "border px-2 py-2 h-[40px]",
       tdPositionClass[position],
       center && "text-center",
       className
@@ -116,7 +116,7 @@ const TableInputCell: React.FC<TableInputCellProps> = ({
   errorMsg = "",
   ...props
 }) => (
-  <td className="border">
+  <td className="border h-[40px]">
     <div className="flex items-center">
       <input
         {...props}
@@ -155,7 +155,7 @@ const TableSelect: React.FC<TableSelectProps> = ({
   children,
   ...props
 }) => (
-  <td className="border text-center">
+  <td className="border h-[40px]">
     <select
       {...props}
       className={cn(
@@ -182,6 +182,28 @@ const TableSelectOption: React.FC<TableSelectOptionProps> = ({
   <option {...props} className={cn("", className)}>
     {children}
   </option>
+);
+
+// ==================== TableImageCell ====================
+interface TableImageCellProps
+  extends React.ImgHTMLAttributes<HTMLImageElement> {
+  src: string
+}
+const TableImageCell: React.FC<TableImageCellProps> = ({
+  className,
+  children,
+  src,
+  ...props
+}) => (
+  <td className="border h-[40px]">
+    {src && (
+      <img
+        {...props}
+        src={src}
+        className={cn("h-full w-full", className)}
+      />
+    )}
+  </td>
 );
 
 // ==================== ButtonCell ====================
@@ -221,5 +243,6 @@ export const Table = {
   InputCell: TableInputCell,
   SelectBox: TableSelect,
   Option: TableSelectOption,
+  ImageCell: TableImageCell,
   Button: TableActionButtonCell,
 };
