@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader } from '../../../component/common/Card'
 import { TextBox } from '../../../component/common/TextBox'
 import { Button } from '../../../component/common/Button'
@@ -10,6 +10,7 @@ import SelectBox from '../../../component/common/SelectBox'
 import { FormikProvider, useFormik } from "formik";
 import * as Yup from 'yup';
 import ColorPicker from '@/component/common/ColorPicker'
+import { useHeader } from '@/app/context/HeaderContext'
 
 type navigationMenu = {
   id: number,
@@ -39,6 +40,12 @@ type feature = {
   colWidth: string,
 }
 const page = () => {
+
+  const { setTitle } = useHeader();
+
+  useEffect(() => {
+    setTitle("PC用ヘッダー作成");
+  }, [setTitle]);
 
   // 2. メニュー設定
   const [navigationList, setNavigationList] = useState<navigationMenu[]>([
@@ -474,7 +481,6 @@ const page = () => {
 
   return (
     <>
-      <h1 className="text-2xl mb-4 font-bold text-gray-800">PC用ヘッダー作成</h1>
       <FormikProvider value={formik}>
         <form onSubmit={formik.handleSubmit}>
           <Card>

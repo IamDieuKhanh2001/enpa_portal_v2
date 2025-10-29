@@ -7,8 +7,11 @@ import NavItem from "./NavItem";
 import navItems from "./navItemList";
 import Link from "next/link";
 
-const AppSidebar = () => {
-  const [isExpandedSideBar, setIsExpandedSideBar] = useState(false);
+interface AppSidebarProps {
+  isExpandedSideBar: boolean
+  setIsExpandedSideBar: (value: boolean) => void;
+}
+const AppSidebar = ({ isExpandedSideBar, setIsExpandedSideBar }: AppSidebarProps) => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   const toggleMenu = (label: string) => {
