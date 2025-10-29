@@ -164,14 +164,6 @@ const page = () => {
       topMessage: Yup.string().trim().required("最上部メッセージを入力してください。"),
       storeLogoUrl: Yup.string().trim().required("店舗ロゴURLを入力してください。"),
       hexColor: Yup.string().trim().required("メインカラーを選択してください。"),
-      awards: Yup.array()
-        .of(
-          Yup.string()
-            .required("受賞を記入してください。")
-            .trim()
-            .min(1, "必須") // không được để trống
-        )
-        .min(1, "少なくとも1つ必要です"), // ít nhất 1 phần tử trong mảng
       featureTitle: Yup.string().trim(),
       buttonText: showButtonSetting
         ? Yup.string().trim().required("入力してください。")
@@ -181,8 +173,6 @@ const page = () => {
         : Yup.string().trim(),
     }),
     onSubmit: async (values) => {
-      console.log("Form submitted:", values);
-
       // Lấy template HTML
       const responseHtml = await fetch("/template_html/tools/4/header.html");
       let templateHtml = await responseHtml.text();
@@ -537,7 +527,6 @@ const page = () => {
                       name={`awards[${index}]`}
                       label={`受賞ロゴ ${index + 1}`}
                       type="text"
-                      isRequired={true}
                       value={url}
                       onChange={formik.handleChange}
                       width='lg'
@@ -1040,7 +1029,6 @@ const page = () => {
             <Button
               size='lg'
               type='submit'
-              disabled={!(formik.isValid && formik.dirty)}
               onClick={formik.submitForm}>
               プレビュー
             </Button>

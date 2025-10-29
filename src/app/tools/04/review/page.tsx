@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader } from '@/component/common/Card';
 import { IconCheck, IconLoader2 } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react'
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 
 const page = () => {
 
