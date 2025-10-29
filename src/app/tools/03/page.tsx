@@ -20,11 +20,13 @@ import { Toaster, toast } from "sonner"; // << Import Toaster và toast từ son
 
 // Import các thành phần và logic đã tách
 import EditableProductTable from "./components/EditableProductTable";
+
 import PreviewModal from "./components/PreviewModal";
 import { useJobPolling } from "./hooks/useJobPolling";
 import { validateRows } from "./lib/validation";
 import { createNewProductRow } from "./lib/utils";
 import { templates } from "./constants";
+import { useHeader } from "@/app/context/HeaderContext";
 import type { ProductRow, AllErrors, BackendJobStatus } from "./types";
 
 // Type cho Sonner toast ID (có thể là string hoặc number)
@@ -109,6 +111,11 @@ export default function TwoPriceImagePage() {
     onFtpError: handleFtpError, // << Pass error handler
   });
   //------------------------------------
+  const { setTitle } = useHeader();
+
+  useEffect(() => {
+    setTitle("二重価格セール画像生成");
+  }, [setTitle]);
 
   // Khởi tạo component phía client và dòng đầu tiên
   useEffect(() => {
@@ -417,9 +424,6 @@ export default function TwoPriceImagePage() {
   // --- JSX Trả về ---
   return (
     <div className="space-y-6">
-      {/* <ToastContainer position="top-right" autoClose={3000} /> << Xóa Container của react-toastify */}
-      <h1 className="text-2xl font-bold text-gray-800">二重価格画像作成</h1>
-
       {/* Template Selection */}
       <Card>
         <CardHeader title="1. テンプレート" />
