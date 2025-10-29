@@ -1,18 +1,28 @@
-'use client'
+"use client";
 
 import Image from "next/image";
-import { Card, CardContent, CardFooter, CardHeader } from "../component/common/Card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "../component/common/Card";
 import { TextBox } from "../component/common/TextBox";
 import { Button } from "../component/common/Button";
 import { Alert } from "../component/common/Alert";
-import * as Yup from 'yup';
+import * as Yup from "yup";
 import { Field, FormikProvider, useFormik } from "formik";
 import { toast } from "react-toastify";
 import { NumberBox } from "../component/common/NumberBox";
 import SelectBox from "../component/common/SelectBox";
 import { IconAdjustments, IconAdOff } from "@tabler/icons-react";
 import Link from "next/link";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../component/common/Tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../component/common/Tabs";
 import { Grid, GridCol, GridRow } from "../component/common/Grid";
 import { Table } from "../component/common/Table";
 import { Badge } from "../component/common/Badge";
@@ -20,7 +30,6 @@ import RadioBox from "@/component/common/RadioBox";
 // import { ErrorMessage, Field, Form, Formik } from 'formik';
 
 export default function Home() {
-
   const formik = useFormik({
     initialValues: {
       title: "title",
@@ -30,7 +39,8 @@ export default function Home() {
     },
     validationSchema: Yup.object({
       title: Yup.string().required("Title must not be empty"),
-      age: Yup.number().required("Number must not be empty")
+      age: Yup.number()
+        .required("Number must not be empty")
         .min(0, "Min value is 0")
         .max(9999, "Max value is 9999"),
       price: Yup.number()
@@ -58,7 +68,6 @@ export default function Home() {
         <TabsContent value="tab1">
           <RadioBox.Group
             defaultValue="2"
-            horizontal
             onChange={(value) => console.log("Selected:", value)}
           >
             <RadioBox.Option value="1">Option 1</RadioBox.Option>
@@ -75,18 +84,20 @@ export default function Home() {
                 description="formik test with yup validation"
                 buttonGroup={
                   <>
-                    <Button size="sm" color="primary">行を追加</Button>
-                    <Button size="sm" color="secondary">5行追加</Button>
-                    <Button size="sm" color="grey">CSVで一括取り込む</Button>
+                    <Button size="sm" color="primary">
+                      行を追加
+                    </Button>
+                    <Button size="sm" color="secondary">
+                      5行追加
+                    </Button>
+                    <Button size="sm" color="grey">
+                      CSVで一括取り込む
+                    </Button>
                   </>
                 }
               />
               <CardContent>
-                <IconAdjustments
-                  size={48}
-                  strokeWidth={2}
-                  color={'black'}
-                />;
+                <IconAdjustments size={48} strokeWidth={2} color={"black"} />;
                 <FormikProvider value={formik}>
                   <form onSubmit={formik.handleSubmit}>
                     <TextBox
@@ -102,7 +113,9 @@ export default function Home() {
                       direction="vertical"
                     />
                     {formik.touched.title && formik.errors.title && (
-                      <div className="text-red-500 text-sm mt-1">{formik.errors.title}</div>
+                      <div className="text-red-500 text-sm mt-1">
+                        {formik.errors.title}
+                      </div>
                     )}
                     <TextBox
                       id="age"
@@ -117,7 +130,9 @@ export default function Home() {
                       direction="vertical"
                     />
                     {formik.touched.age && formik.errors.age && (
-                      <div className="text-red-500 text-sm mt-1">{formik.errors.age}</div>
+                      <div className="text-red-500 text-sm mt-1">
+                        {formik.errors.age}
+                      </div>
                     )}
                     <TextBox
                       id="price"
@@ -132,7 +147,9 @@ export default function Home() {
                       direction="vertical"
                     />
                     {formik.touched.price && formik.errors.price && (
-                      <div className="text-red-500 text-sm mt-1">{formik.errors.price}</div>
+                      <div className="text-red-500 text-sm mt-1">
+                        {formik.errors.price}
+                      </div>
                     )}
                     <TextBox
                       id=""
@@ -161,20 +178,25 @@ export default function Home() {
                       isRequired={true}
                       onChange={formik.handleChange}
                     />
-                    {formik.touched.selectBoxValue && formik.errors.selectBoxValue && (
-                      <div className="text-red-500 text-sm mt-1">{formik.errors.selectBoxValue}</div>
-                    )}
+                    {formik.touched.selectBoxValue &&
+                      formik.errors.selectBoxValue && (
+                        <div className="text-red-500 text-sm mt-1">
+                          {formik.errors.selectBoxValue}
+                        </div>
+                      )}
                   </form>
                 </FormikProvider>
               </CardContent>
               <CardFooter>
-                <Button type='submit' onClick={formik.submitForm}>
+                <Button type="submit" onClick={formik.submitForm}>
                   excecute
                 </Button>
               </CardFooter>
             </Card>
 
-            <h1 className="text-2xl font-bold text-gray-800 mb-2">セールページ作成</h1>
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">
+              セールページ作成
+            </h1>
             <Card>
               <CardHeader
                 title="カードタイトル"
@@ -196,9 +218,7 @@ export default function Home() {
                   value={"aaaa"}
                   direction="horizontal"
                   placeholder="カスタムイベント名"
-                  onChange={() => {
-
-                  }}
+                  onChange={() => {}}
                 />
                 <div className="flex flex-row">
                   <TextBox
@@ -208,9 +228,7 @@ export default function Home() {
                     label={"イベント名を入力"}
                     value={"aaaa"}
                     placeholder="カスタムイベント名"
-                    onChange={() => {
-
-                    }}
+                    onChange={() => {}}
                   />
                   <TextBox
                     id="custom-event-name"
@@ -221,9 +239,7 @@ export default function Home() {
                     label={"イベント名を入力"}
                     value={"aaaa"}
                     placeholder="カスタムイベント名"
-                    onChange={() => {
-
-                    }}
+                    onChange={() => {}}
                   />
                 </div>
               </CardContent>
@@ -235,25 +251,19 @@ export default function Home() {
             <Card>
               <CardHeader title="Component alert" />
               <CardContent>
-                <Alert variant="info">
-                  thong bao info
-                </Alert>
-                <Alert variant="success">
-                  thong bao success
-                </Alert>
-                <Alert variant="error">
-                  thong bao error
-                </Alert>
-                <Alert variant="warning">
-                  thong bao warning
-                </Alert>
+                <Alert variant="info">thong bao info</Alert>
+                <Alert variant="success">thong bao success</Alert>
+                <Alert variant="error">thong bao error</Alert>
+                <Alert variant="warning">thong bao warning</Alert>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader title="Component Button" />
               <CardContent>
-                <Button style={{ background: "darkblue" }} color="primary">primary</Button>
+                <Button style={{ background: "darkblue" }} color="primary">
+                  primary
+                </Button>
                 <Button color="secondary">secondary</Button>
                 <Button color="primary">primary</Button>
                 <Button>sssss</Button>
@@ -268,57 +278,49 @@ export default function Home() {
             <Card>
               <CardHeader title="Component Icon" />
               <CardContent>
-                <IconAdOff
-                  size={48}
-                  strokeWidth={2}
-                  color={'#000000'}
-                />
+                <IconAdOff size={48} strokeWidth={2} color={"#000000"} />
                 <p>Xem icon sử dụng tại: </p>
-                <Link href="https://tabler-icons-react.vercel.app/">https://tabler-icons-react.vercel.app/</Link>
+                <Link href="https://tabler-icons-react.vercel.app/">
+                  https://tabler-icons-react.vercel.app/
+                </Link>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader title="Component Badge" />
               <CardContent>
-                <Badge color="primary">
-                  primary
-                </Badge>
-                <Badge color="secondary">
-                  secondary
-                </Badge>
-                <Badge color="success">
-                  success
-                </Badge>
-                <Badge color="warning">
-                  warning
-                </Badge>
+                <Badge color="primary">primary</Badge>
+                <Badge color="secondary">secondary</Badge>
+                <Badge color="success">success</Badge>
+                <Badge color="warning">warning</Badge>
               </CardContent>
             </Card>
           </div>
         </TabsContent>
         <TabsContent value="tab2">
-
           <Grid>
             <GridRow cols={12} gap="gap-2">
               <GridCol md={2} lg={2}>
                 <Card>
                   <CardHeader title="Component Button" />
                   <CardContent>
-                    <Button style={{ background: "darkblue" }} color="primary">primary</Button>
+                    <Button style={{ background: "darkblue" }} color="primary">
+                      primary
+                    </Button>
                     <Button color="secondary">secondary</Button>
                     <Button color="primary">primary</Button>
                     <Button>sssss</Button>
                   </CardContent>
                 </Card>
-
               </GridCol>
 
               <GridCol md={6} lg={4}>
                 <Card>
                   <CardHeader title="Component Button" />
                   <CardContent>
-                    <Button style={{ background: "darkblue" }} color="primary">primary</Button>
+                    <Button style={{ background: "darkblue" }} color="primary">
+                      primary
+                    </Button>
                     <Button color="secondary">secondary</Button>
                     <Button color="primary">primary</Button>
                     <Button>sssss</Button>
@@ -330,7 +332,9 @@ export default function Home() {
                 <Card>
                   <CardHeader title="Component Button" />
                   <CardContent>
-                    <Button style={{ background: "darkblue" }} color="primary">primary</Button>
+                    <Button style={{ background: "darkblue" }} color="primary">
+                      primary
+                    </Button>
                     <Button color="secondary">secondary</Button>
                     <Button color="primary">primary</Button>
                     <Button>sssss</Button>
@@ -339,7 +343,6 @@ export default function Home() {
               </GridCol>
             </GridRow>
           </Grid>
-
         </TabsContent>
         <TabsContent value="tab3">
           <Table.Container>
@@ -359,7 +362,9 @@ export default function Home() {
                 <Table.Td>https://example.com/image.png</Table.Td>
                 <Table.Td>id_string</Table.Td>
                 <Table.Td>
-                  <button className="text-red-500 hover:text-red-700">削除</button>
+                  <button className="text-red-500 hover:text-red-700">
+                    削除
+                  </button>
                 </Table.Td>
               </Table.Row>
               {/* More rows */}
@@ -397,53 +402,30 @@ export default function Home() {
           <Table.Body>
             <Table.Row>
               <Table.Td position="left">りんご</Table.Td>
-              <Table.InputCell
-              />
-              <Table.InputCell
-              />
-              <Table.InputCell
-              />
-              <Table.InputCell
-              />
-              <Table.InputCell
-              />
-              <Table.InputCell
-              />
-              <Table.InputCell
-              />
-              <Table.InputCell
-              />
-              <Table.InputCell
-              />
-              <Table.InputCell
-              />
-              <Table.InputCell
-              />
-              <Table.InputCell
-              />
-              <Table.InputCell
-              />
-              <Table.InputCell
-              />
-              <Table.InputCell
-              />
-              <Table.InputCell
-              />
-              <Table.InputCell
-              />
-              <Table.InputCell
-              />
-              <Table.InputCell
-              />
-              <Table.InputCell
-              />
+              <Table.InputCell />
+              <Table.InputCell />
+              <Table.InputCell />
+              <Table.InputCell />
+              <Table.InputCell />
+              <Table.InputCell />
+              <Table.InputCell />
+              <Table.InputCell />
+              <Table.InputCell />
+              <Table.InputCell />
+              <Table.InputCell />
+              <Table.InputCell />
+              <Table.InputCell />
+              <Table.InputCell />
+              <Table.InputCell />
+              <Table.InputCell />
+              <Table.InputCell />
+              <Table.InputCell />
+              <Table.InputCell />
+              <Table.InputCell />
             </Table.Row>
           </Table.Body>
         </Table.Container>
-
       </Tabs>
-
-
     </>
   );
 }
