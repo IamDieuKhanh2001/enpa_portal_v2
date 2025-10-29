@@ -54,16 +54,6 @@ const page = () => {
       name: "",
       url: "",
     },
-    {
-      id: 2,
-      name: "Home",
-      url: "https://web20.empowerment-town.com/storejob_set/",
-    },
-    {
-      id: 3,
-      name: "Help",
-      url: "https://mail.google.com/chat/u/0/#chat/home",
-    },
   ]);
   const [iconMenuList, setIconMenuList] = useState<iconMenu[]>([
     {
@@ -72,18 +62,6 @@ const page = () => {
       text: "",
       url: "",
     },
-    {
-      id: 2,
-      img: "https://tshop.r10s.jp/ricetanaka/cabinet/imgrc0106013990.jpg?fitin=100:100",
-      text: "令和3年産 備蓄米 米 ",
-      url: "https://item.rakuten.co.jp/ricetanaka/r-0000/?s-id=top_normal_rk_hashist",
-    },
-    {
-      id: 3,
-      img: "https://ias.r10s.jp/dst/ec/162381/23585571/1-1-1/d91a13ed7386113e8ee8f52bf9494d4b.png",
-      text: "【3袋セット】元気あふれる毎日をサポート",
-      url: "https://item.rakuten.co.jp/kenkoukazoku/6933/",
-    },
   ]);
   const [suggestKeywordList, setSuggestKeywordList] = useState<suggestKeyword[]>([
     {
@@ -91,41 +69,11 @@ const page = () => {
       keyword: "",
       url: "",
     },
-    {
-      id: 2,
-      keyword: "フィギュア",
-      url: "https://search.rakuten.co.jp/search/mall/%E3%83%95%E3%82%A3%E3%82%AE%E3%83%A5%E3%82%A2+%E6%A3%9A/?l-id=pc_header_search_suggest",
-    },
-    {
-      id: 3,
-      keyword: "カレー",
-      url: "https://search.rakuten.co.jp/search/mall/%E3%82%AB%E3%83%AC%E3%83%BC/?l-id=pc_header_search_suggest",
-    },
   ]);
   const [slideList, setSlideList] = useState<slide[]>([
     {
       id: 1,
       slideImg: "",
-      url: "",
-    },
-    {
-      id: 2,
-      slideImg: "https://r.r10s.jp/com/img/EMP/202510/a875956f-0ea8-45ae-9303-f602660445fa-20251001_toshikoshi_bn1_3_top_big_1890x300_v2.jpg",
-      url: "https://event.rakuten.co.jp/toshikoshi/?l-id=top_normal_bigbnr_pc_HEBCJJJA_157737_0",
-    },
-    {
-      id: 3,
-      slideImg: "https://r.r10s.jp/com/img/EMP/202510/d555a7b9-affa-4389-9edc-9edbb7fe1629-bigbanner_1890_300_ALL_logo_02-color-04.jpg",
-      url: "https://brandavenue.rakuten.co.jp/contents/coupon/?l-id=top_normal_bigbnr_pc_HGHHEEZH_157543_0",
-    },
-    {
-      id: 4,
-      slideImg: "https://r.r10s.jp/com/img/EMP/202510/94f29082-3246-49dd-bd2d-dcbd650fd627-dailypoint5_02_1890x300.jpg",
-      url: "",
-    },
-    {
-      id: 5,
-      slideImg: "https://r.r10s.jp/com/img/EMP/202510/3d338ab0-1a37-4cc9-aaa2-591bd0e51c1e-20250919_awlife_bn1_1_top_big_1890x300.jpg",
       url: "",
     },
   ]);
@@ -140,20 +88,11 @@ const page = () => {
 
   const [showButtonSetting, setShowButtonSettting] = useState<boolean>(false);
 
-  const selectColorList = [
-    "#3B82F6", // blue
-    "#10B981", // green
-    "#F59E0B", // yellow
-    "#EF4444", // red
-    "#8B5CF6", // purple
-    "#06B6D4", // cyan
-  ];
-
   const formik = useFormik({
     initialValues: {
       // 1.基本設定
-      topMessage: "３０００円最上部メッセージ",
-      storeLogoUrl: "https://web20.empowerment-town.com/static/img/emportal_logo.png",
+      topMessage: "",
+      storeLogoUrl: "",
       hexColor: "#3B82F6",
       awards: [""],
       featureTitle: "",
