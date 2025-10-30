@@ -485,7 +485,7 @@ export default function TwoPriceImagePage() {
           {isModalLoading && isPreviewModalOpen ? (
             <IconLoader2 className="animate-spin mr-2" />
           ) : null}
-          プレビュー
+          画像生成
         </Button>
       </div>
 
