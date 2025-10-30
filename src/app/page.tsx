@@ -12,8 +12,6 @@ import { Button } from "../component/common/Button";
 import { Alert } from "../component/common/Alert";
 import * as Yup from "yup";
 import { Field, FormikProvider, useFormik } from "formik";
-import { toast } from "react-toastify";
-import { NumberBox } from "../component/common/NumberBox";
 import SelectBox from "../component/common/SelectBox";
 import { IconAdjustments, IconAdOff } from "@tabler/icons-react";
 import Link from "next/link";

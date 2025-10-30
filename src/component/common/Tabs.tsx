@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { forwardRef, useImperativeHandle, useState } from "react";
 import { cn } from "../../lib/utils";
 
 // Tabs
@@ -8,8 +8,14 @@ interface TabsProps {
     children: React.ReactNode;
     className?: string;
 }
-const Tabs = ({ defaultTab, children, className }: TabsProps) => {
+const Tabs = forwardRef(({ defaultTab, children, className }: TabsProps, ref) => {
     const [activeTab, setActiveTab] = useState(defaultTab);
+
+    // Expose method cho component cha dùng
+    useImperativeHandle(ref, () => ({
+        setActiveTab: (tab: string) => setActiveTab(tab),
+        getActiveTab: () => activeTab,
+    }));
 
     // React.cloneElement sẽ tự động truyền props cho các con
     const enhancedChildren = React.Children.map(children, (child: any) => {
@@ -23,7 +29,7 @@ const Tabs = ({ defaultTab, children, className }: TabsProps) => {
     });
 
     return <div className={cn("w-full", className)}>{enhancedChildren}</div>;
-};
+});
 
 // TabsList
 interface TabsListProps {
@@ -57,6 +63,7 @@ interface TabsTriggerProps {
     value: string;
     children?: string;
     className?: string;
+    disabled?: boolean;
 }
 const TabsTrigger = ({
     value,
@@ -64,22 +71,25 @@ const TabsTrigger = ({
     className,
     activeTab,
     setActiveTab,
+    disabled = false,
 }: TabsTriggerProps & {
     activeTab?: string;
     setActiveTab?: (v: string) => void;
 }) => (
     <button
+        type="button"
         onClick={() => setActiveTab && setActiveTab(value)}
+        disabled={disabled}
         className={cn(
-            "inline-flex items-center justify-center px-4 py-3 text-sm font-medium transition-colors",
-            "border-b-2 -mb-px",
+            "inline-flex items-center justify-center px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px",
             activeTab === value
-                ? "border-[#EB322D] text-[#EB322D] font-semibold"
+                ? "border-primary text-primary font-semibold"
                 : "border-transparent text-gray-500 hover:text-gray-700",
+            "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:text-gray-400 disabled:border-transparent",
             className
         )}
     >
-        {children ? children : "Title unset"}
+        {children ? children : ""}
     </button>
 );
 TabsTrigger.displayName = "TabsTrigger";

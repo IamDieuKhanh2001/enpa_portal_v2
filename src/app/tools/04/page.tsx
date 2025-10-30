@@ -1,16 +1,16 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import { Card, CardContent, CardHeader } from '../../../component/common/Card'
-import { TextBox } from '../../../component/common/TextBox'
-import { Button } from '../../../component/common/Button'
-import { Table } from '../../../component/common/Table'
-import { IconTrash } from '@tabler/icons-react'
-import SelectBox from '../../../component/common/SelectBox'
+import React, { useEffect, useRef, useState } from 'react'
 import { FormikProvider, useFormik } from "formik";
 import * as Yup from 'yup';
-import ColorPicker from '@/component/common/ColorPicker'
 import { useHeader } from '@/app/context/HeaderContext'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/component/common/Tabs'
+import TabItem1 from './components/TabItem1'
+import TabItem2 from './components/TabItem2'
+import TabItem3 from './components/TabItem3'
+import TabItem4 from './components/TabItem4'
+import TabItem5 from './components/TabItem5'
+import TabItem6 from './components/TabItem6'
 
 type navigationMenu = {
   id: number,
@@ -46,6 +46,9 @@ const page = () => {
   useEffect(() => {
     setTitle("楽天GOLD ヘッダー生成");
   }, [setTitle]);
+
+  const tabsRef = useRef<any>(null);
+  const [isTab1Valid, setIsTab1Valid] = useState(false);
 
   // 2. メニュー設定
   const [navigationList, setNavigationList] = useState<navigationMenu[]>([
@@ -122,6 +125,25 @@ const page = () => {
     },
   });
 
+  useEffect(() => {
+    const checkTab1Valid = async () => {
+      const errors = await formik.validateForm();
+
+      const tab1Errors = (({ topMessage, storeLogoUrl, hexColor }) => ({
+        topMessage,
+        storeLogoUrl,
+        hexColor,
+      }))(errors);
+
+      const valid = Object.values(tab1Errors).every((v) => !v);
+
+      setIsTab1Valid(valid);
+    };
+
+    checkTab1Valid();
+  }, [formik.values.topMessage, formik.values.storeLogoUrl, formik.values.hexColor]);
+
+
   const editHtmlContent = (templateHtml: string, values: any) => {
 
     // ナビゲーションメニュー
@@ -134,9 +156,11 @@ const page = () => {
     // 受賞ロゴ
     let awardIconHtml = "";
     values.awards?.map((awardUrl: string) => {
-      awardIconHtml += `
+      if (awardUrl !== "") {
+        awardIconHtml += `
         <img src=${awardUrl} alt="award">
       `
+      }
     })
 
     // アイコン付きメニュー
@@ -248,7 +272,11 @@ const page = () => {
     templateHtml = templateHtml.replace("{{TOP_MSG}}", `${values.topMessage}`);
     templateHtml = templateHtml.replace("{{NAVIGATION_MENU}}", navigationHtml);
     templateHtml = templateHtml.replace("{{STORE_LOGO_URL}}", `${values.storeLogoUrl}`);
-    templateHtml = templateHtml.replace("{{IMG_AWARD}}", awardIconHtml);
+    if (awardIconHtml !== "") {
+      templateHtml = templateHtml.replace("{{IMG_AWARD}}", awardIconHtml);
+    } else {
+      templateHtml = templateHtml.replace("{{IMG_AWARD}}", "");
+    }
     templateHtml = templateHtml.replace("{{ICON_MENU}}", iconMenuHtml);
     templateHtml = templateHtml.replace("{{SUGGEST_KEYWORD}}", suggestKeywordHtml);
     if (slideHtml !== "") {
@@ -412,566 +440,71 @@ const page = () => {
     <>
       <FormikProvider value={formik}>
         <form onSubmit={formik.handleSubmit}>
-          <Card>
-            <CardHeader
-              title='1.基本設定'
-              description="は必須項目です。"
-              showDescAsterisk={true}
-            />
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-                {/* 基本設定 Col 1  */}
-                <div>
-                  <TextBox
-                    id="topMessage"
-                    name="topMessage"
-                    type="text"
-                    isRequired={true}
-                    label={"最上部メッセージ"}
-                    value={formik.values.topMessage}
-                    placeholder="3,980円以上で送料無料"
-                    direction="vertical"
-                    onChange={formik.handleChange}
-                    error={formik.errors.topMessage}
-                    touched={formik.touched.topMessage}
-                  />
-                  <TextBox
-                    id="storeLogoUrl"
-                    name="storeLogoUrl"
-                    type="text"
-                    isRequired={true}
-                    label={"店舗ロゴURL"}
-                    value={formik.values.storeLogoUrl}
-                    placeholder="https://example.com/logo.png"
-                    direction="vertical"
-                    onChange={formik.handleChange}
-                    error={formik.errors.storeLogoUrl}
-                    touched={formik.touched.storeLogoUrl}
-                  />
-                  <ColorPicker
-                    id='hexColor'
-                    name='hexColor'
-                    value={formik.values.hexColor}
-                    onColorChange={(color) => {
-                      formik.setFieldValue("hexColor", color);
-                    }}
-                  />
-                </div>
-                {/* 基本設定 Col 2  */}
-                <div>
-                  {formik.values.awards?.map((url, index) => (
-                    <TextBox
-                      key={index}
-                      id={`award-${index}`}
-                      name={`awards[${index}]`}
-                      label={`受賞ロゴ ${index + 1}`}
-                      type="text"
-                      value={url}
-                      onChange={formik.handleChange}
-                      width='lg'
-                      className='flex-1'
-                      placeholder="https://image.rakuten.co.jp/empoportal/empo.jpg"
-                      direction="vertical"
-                      suffix={
-                        <Button
-                          size='sm'
-                          color='textOnly'
-                          className='px-0'
-                          disabled={formik.values.awards.length === 1 ? true : false}
-                          onClick={() => deleteInputAwardImg(index)}
-                        >
-                          <IconTrash size={20} />
-                        </Button>
-                      }
-                      error={Array.isArray(formik.errors.awards) ? formik.errors.awards[index] : undefined}
-                      touched={Array.isArray(formik.touched.awards) ? formik.touched.awards[index] : false}
-                    />
-                  ))}
-
-                  <Button
-                    size='sm'
-                    color='secondary'
-                    disabled={formik.values.awards.length >= 3 ? true : false}
-                    onClick={() => createInputAwardImg()}
-                  >
-                    受賞ロゴを追加
-                  </Button>
-                </div>
-              </div>
-
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader
-              title='2. ナビゲーションメニュー設定'
-              buttonGroup={
-                <>
-                  <Button
-                    color='secondary'
-                    size='sm'
-                    onClick={() => addNavigationRow(1)}
-                  >
-                    行を追加
-                  </Button>
-                  <Button
-                    color='secondary'
-                    size='sm'
-                    onClick={() => addNavigationRow(5)}
-                  >
-                    5行追加
-                  </Button>
-                </>
-              }
-            />
-            <CardContent>
-              <Table.Container>
-                <Table.Head>
-                  <Table.Row>
-                    <Table.Th width='w-24'>ID</Table.Th>
-                    <Table.Th>項目名</Table.Th>
-                    <Table.Th>リンク先URL</Table.Th>
-                    <Table.Th>削除</Table.Th>
-                  </Table.Row>
-                </Table.Head>
-
-                <Table.Body>
-                  {navigationList?.map((item, index) => (
-                    <Table.Row key={`navigation-${index}`}>
-                      <Table.Td>{item.id}</Table.Td>
-                      <Table.InputCell
-                        value={item.name}
-                        onChange={(e) => {
-                          setNavigationList((prevRows) =>
-                            prevRows.map((r) =>
-                              r.id === item.id
-                                ? { ...r, name: e.target.value }
-                                : r
-                            )
-                          )
-                        }}
-                      />
-                      <Table.InputCell
-                        value={item.url}
-                        onChange={(e) => {
-                          setNavigationList((prevRows) =>
-                            prevRows.map((r) =>
-                              r.id === item.id
-                                ? { ...r, url: e.target.value }
-                                : r
-                            )
-                          )
-                        }}
-                      />
-                      <Table.Button onClick={() => deleteNavigationRow(item.id)}>
-                        <IconTrash size={20} />
-                      </Table.Button>
-                    </Table.Row>
-                  ))}
-                </Table.Body>
-              </Table.Container>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader
-              title='3.アイコン付きメニュー設定'
-              buttonGroup={
-                <>
-                  <Button
-                    color='secondary'
-                    size='sm'
-                    onClick={() => addIconMenuRow(1)}
-                  >
-                    行を追加
-                  </Button>
-                  <Button
-                    color='secondary'
-                    size='sm'
-                    onClick={() => addIconMenuRow(5)}
-                  >
-                    5行追加
-                  </Button>
-                </>
-              }
-            />
-            <CardContent>
-              <Table.Container>
-                <Table.Head>
-                  <Table.Row>
-                    <Table.Th width='w-24'>ID</Table.Th>
-                    <Table.Th width='w-24'>画像</Table.Th>
-                    <Table.Th>画像URL</Table.Th>
-                    <Table.Th>リンク先URL</Table.Th>
-                    <Table.Th>テキスト</Table.Th>
-                    <Table.Th>削除</Table.Th>
-                  </Table.Row>
-                </Table.Head>
-                <Table.Body>
-                  {iconMenuList?.map((item, index) => (
-                    <Table.Row key={`iconMenu-${index}`}>
-                      <Table.Td>{item.id}</Table.Td>
-                      <Table.ImageCell
-                        src={item.img}
-                        alt='iconMenu'
-                      />
-                      <Table.InputCell
-                        value={item.img}
-                        onChange={(e) => {
-                          setIconMenuList((prevRows) =>
-                            prevRows.map((r) =>
-                              r.id === item.id
-                                ? { ...r, img: e.target.value }
-                                : r
-                            )
-                          )
-                        }}
-                      />
-                      <Table.InputCell
-                        value={item.url}
-                        onChange={(e) => {
-                          setIconMenuList((prevRows) =>
-                            prevRows.map((r) =>
-                              r.id === item.id
-                                ? { ...r, url: e.target.value }
-                                : r
-                            )
-                          )
-                        }}
-                      />
-                      <Table.InputCell
-                        value={item.text}
-                        onChange={(e) => {
-                          setIconMenuList((prevRows) =>
-                            prevRows.map((r) =>
-                              r.id === item.id
-                                ? { ...r, text: e.target.value }
-                                : r
-                            )
-                          )
-                        }}
-                      />
-                      <Table.Button onClick={() => deleteIconMenuRow(item.id)}>
-                        <IconTrash size={20} />
-                      </Table.Button>
-                    </Table.Row>
-                  ))}
-                </Table.Body>
-              </Table.Container>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader
-              title='4. 注目キーワード設定'
-              buttonGroup={
-                <>
-                  <Button
-                    color='secondary'
-                    size='sm'
-                    onClick={() => addSuggestKeywordRow(1)}
-                  >
-                    行を追加
-                  </Button>
-                  <Button
-                    color='secondary'
-                    size='sm'
-                    onClick={() => addSuggestKeywordRow(5)}
-                  >
-                    5行追加
-                  </Button>
-                </>
-              }
-            />
-            <CardContent>
-              <Table.Container>
-                <Table.Head>
-                  <Table.Row>
-                    <Table.Th width='w-24'>ID</Table.Th>
-                    <Table.Th>キーワード</Table.Th>
-                    <Table.Th>検索URL</Table.Th>
-                    <Table.Th>削除</Table.Th>
-                  </Table.Row>
-                </Table.Head>
-                <Table.Body>
-                  {suggestKeywordList?.map((item, index) => (
-                    <Table.Row key={`keyword-${index}`}>
-                      <Table.Td>{item.id}</Table.Td>
-                      <Table.InputCell
-                        value={item.keyword}
-                        onChange={(e) => {
-                          setSuggestKeywordList((prevRows) =>
-                            prevRows.map((r) =>
-                              r.id === item.id
-                                ? { ...r, keyword: e.target.value }
-                                : r
-                            )
-                          )
-                        }}
-                      />
-                      <Table.InputCell
-                        value={item.url}
-                        onChange={(e) => {
-                          setSuggestKeywordList((prevRows) =>
-                            prevRows.map((r) =>
-                              r.id === item.id
-                                ? { ...r, url: e.target.value }
-                                : r
-                            )
-                          )
-                        }}
-                      />
-                      <Table.Button onClick={() => deleteSuggestKeywordRow(item.id)}>
-                        <IconTrash size={20} />
-                      </Table.Button>
-                    </Table.Row>
-                  ))}
-                </Table.Body>
-              </Table.Container>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader
-              title='5. スライドバナー設定'
-              buttonGroup={
-                <>
-                  <Button
-                    color='secondary'
-                    size='sm'
-                    onClick={() => addSlideRow(1)}
-                  >
-                    行を追加
-                  </Button>
-                  <Button
-                    color='secondary'
-                    size='sm'
-                    onClick={() => addSlideRow(5)}
-                  >
-                    5行追加
-                  </Button>
-                </>
-              }
-            />
-            <CardContent>
-              <Table.Container>
-                <Table.Head>
-                  <Table.Row>
-                    <Table.Th width='w-24'>ID</Table.Th>
-                    <Table.Th width='w-24'>画像</Table.Th>
-                    <Table.Th>画像URL</Table.Th>
-                    <Table.Th>リンク先URL</Table.Th>
-                    <Table.Th>削除</Table.Th>
-                  </Table.Row>
-                </Table.Head>
-                <Table.Body>
-                  {slideList?.map((item, index) => (
-                    <Table.Row key={`slide-${index}`}>
-                      <Table.Td>{item.id}</Table.Td>
-                      <Table.ImageCell
-                        src={item.slideImg}
-                        alt='slide'
-                      />
-                      <Table.InputCell
-                        value={item.slideImg}
-                        onChange={(e) => {
-                          setSlideList((prevRows) =>
-                            prevRows.map((r) =>
-                              r.id === item.id
-                                ? { ...r, slideImg: e.target.value }
-                                : r
-                            )
-                          )
-                        }}
-                      />
-                      <Table.InputCell
-                        value={item.url}
-                        onChange={(e) => {
-                          setSlideList((prevRows) =>
-                            prevRows.map((r) =>
-                              r.id === item.id
-                                ? { ...r, url: e.target.value }
-                                : r
-                            )
-                          )
-                        }}
-                      />
-                      <Table.Button onClick={() => deleteSlideRow(item.id)}>
-                        <IconTrash size={20} />
-                      </Table.Button>
-                    </Table.Row>
-                  ))}
-                </Table.Body>
-              </Table.Container>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader title='6. 特集設定' />
-            <CardContent>
-              <div className='grid grid-cols-1 md:grid-cols-4 gap-x-4 gap-y-4'>
-                <div>
-                  <TextBox
-                    id="featureTitle"
-                    name="featureTitle"
-                    type="text"
-                    width='full'
-                    label={"見出し"}
-                    value={formik.values.featureTitle}
-                    placeholder="例：新商品"
-                    direction="vertical"
-                    onChange={formik.handleChange}
-                    error={formik.errors.featureTitle}
-                    touched={formik.touched.featureTitle}
-                  />
-                </div>
-                <div>
-                  <SelectBox
-                    id=''
-                    name=''
-                    label='ボタン有無'
-                    width='full'
-                    direction='vertical'
-                    value={showButtonSetting ? "1" : "0"}
-                    options={[
-                      { value: '1', label: '有' },
-                      { value: '0', label: '無' },
-                    ]}
-                    onChange={(e) => {
-                      setShowButtonSettting(e.target.value === "1" ? true : false);
-                    }}
-                  />
-                </div>
-
-                {showButtonSetting && (
-                  <React.Fragment>
-                    <div>
-                      <TextBox
-                        id="buttonText"
-                        name="buttonText"
-                        type="text"
-                        width='full'
-                        isRequired={true}
-                        label={"ボタン文言"}
-                        value={formik.values.buttonText}
-                        placeholder="例：楽天に遷移する"
-                        direction="vertical"
-                        onChange={formik.handleChange}
-                        error={formik.errors.buttonText}
-                        touched={formik.touched.buttonText}
-                      />
-                    </div>
-                    <div>
-                      <TextBox
-                        id="buttonLink"
-                        name="buttonLink"
-                        type="text"
-                        width='full'
-                        isRequired={true}
-                        label={"ボタンリンク先"}
-                        value={formik.values.buttonLink}
-                        placeholder="例：https://www.rakuten.co.jp/"
-                        direction="vertical"
-                        onChange={formik.handleChange}
-                        error={formik.errors.buttonLink}
-                        touched={formik.touched.buttonLink}
-                      />
-                    </div>
-                  </React.Fragment>
-                )}
-              </div>
-              <div className='flex justify-end gap-2 mb-2'>
-                <Button
-                  color='secondary'
-                  size='sm'
-                  onClick={() => addFeatureRow(1)}
-                >
-                  行を追加
-                </Button>
-                <Button
-                  color='secondary'
-                  size='sm'
-                  onClick={() => addFeatureRow(5)}
-                >
-                  5行追加
-                </Button>
-              </div>
-              <Table.Container>
-                <Table.Head>
-                  <Table.Row>
-                    <Table.Th width='w-24'>ID</Table.Th>
-                    <Table.Th width='w-24'>画像</Table.Th>
-                    <Table.Th>画像URL</Table.Th>
-                    <Table.Th>リンク先URL</Table.Th>
-                    <Table.Th>画像の横幅</Table.Th>
-                    <Table.Th>削除</Table.Th>
-                  </Table.Row>
-                </Table.Head>
-                <Table.Body>
-                  {featureList?.map((item, index) => (
-                    <Table.Row key={`feature-${index}`}>
-                      <Table.Td>{item.id}</Table.Td>
-                      <Table.ImageCell
-                        src={item.img}
-                        alt='slide'
-                      />
-                      <Table.InputCell
-                        value={item.img}
-                        onChange={(e) => {
-                          setFeatureList((prevRows) =>
-                            prevRows.map((r) =>
-                              r.id === item.id
-                                ? { ...r, img: e.target.value }
-                                : r
-                            )
-                          )
-                        }}
-                      />
-                      <Table.InputCell
-                        value={item.url}
-                        onChange={(e) => {
-                          setFeatureList((prevRows) =>
-                            prevRows.map((r) =>
-                              r.id === item.id
-                                ? { ...r, url: e.target.value }
-                                : r
-                            )
-                          )
-                        }}
-                      />
-                      <Table.SelectBox
-                        value={item.colWidth}
-                        onChange={(e) => {
-                          setFeatureList((prevRows) =>
-                            prevRows.map((r) =>
-                              r.id === item.id
-                                ? { ...r, colWidth: e.target.value }
-                                : r
-                            )
-                          )
-                        }}
-                      >
-                        <Table.Option value={"2"}>2列用</Table.Option>
-                        <Table.Option value={"3"}>3列用</Table.Option>
-                        <Table.Option value={"4"}>4列用</Table.Option>
-                        <Table.Option value={"6"}>6列用</Table.Option>
-                      </Table.SelectBox>
-                      <Table.Button
-                        onClick={() => deleteFeatureRow(item.id)}
-                      >
-                        <IconTrash size={20} />
-                      </Table.Button>
-                    </Table.Row>
-                  ))}
-                </Table.Body>
-              </Table.Container>
-            </CardContent>
-          </Card>
-          <div className='flex justify-center'>
-            <Button
-              size='lg'
-              type='submit'
-              onClick={formik.submitForm}>
-              プレビュー
-            </Button>
-          </div>
+          <Tabs ref={tabsRef} defaultTab={"tab1"}>
+            <TabsList>
+              <TabsTrigger value="tab1">基本設定</TabsTrigger>
+              <TabsTrigger disabled={!isTab1Valid} value="tab2">ナビゲーションメニュー設定</TabsTrigger>
+              <TabsTrigger disabled={!isTab1Valid} value="tab3">アイコン付きメニュー設定</TabsTrigger>
+              <TabsTrigger disabled={!isTab1Valid} value="tab4">注目キーワード設定</TabsTrigger>
+              <TabsTrigger disabled={!isTab1Valid} value="tab5">スライドバナー設定</TabsTrigger>
+              <TabsTrigger disabled={!isTab1Valid} value="tab6">特集設定</TabsTrigger>
+            </TabsList>
+            <TabsContent value="tab1">
+              <TabItem1
+                formik={formik}
+                createInputAwardImg={createInputAwardImg}
+                deleteInputAwardImg={deleteInputAwardImg}
+                tabsRef={tabsRef}
+              />
+            </TabsContent>
+            <TabsContent value="tab2">
+              <TabItem2
+                addNavigationRow={addNavigationRow}
+                deleteNavigationRow={deleteNavigationRow}
+                navigationList={navigationList}
+                setNavigationList={setNavigationList}
+                tabsRef={tabsRef}
+              />
+            </TabsContent>
+            <TabsContent value="tab3">
+              <TabItem3
+                addIconMenuRow={addIconMenuRow}
+                iconMenuList={iconMenuList}
+                setIconMenuList={setIconMenuList}
+                deleteIconMenuRow={deleteIconMenuRow}
+                tabsRef={tabsRef}
+              />
+            </TabsContent>
+            <TabsContent value="tab4">
+              <TabItem4
+                suggestKeywordList={suggestKeywordList}
+                setSuggestKeywordList={setSuggestKeywordList}
+                addSuggestKeywordRow={addSuggestKeywordRow}
+                deleteSuggestKeywordRow={deleteSuggestKeywordRow}
+                tabsRef={tabsRef}
+              />
+            </TabsContent>
+            <TabsContent value="tab5">
+              <TabItem5
+                slideList={slideList}
+                setSlideList={setSlideList}
+                addSlideRow={addSlideRow}
+                deleteSlideRow={deleteSlideRow}
+                tabsRef={tabsRef}
+              />
+            </TabsContent>
+            <TabsContent value="tab6">
+              <TabItem6
+                formik={formik}
+                showButtonSetting={showButtonSetting}
+                setShowButtonSettting={setShowButtonSettting}
+                addFeatureRow={addFeatureRow}
+                deleteFeatureRow={deleteFeatureRow}
+                featureList={featureList}
+                setFeatureList={setFeatureList}
+              />
+            </TabsContent>
+          </Tabs>
         </form>
       </FormikProvider>
     </>
