@@ -11,6 +11,7 @@ import TabItem3 from './components/TabItem3';
 import TabItem4 from './components/TabItem4';
 import TabItem5 from './components/TabItem5';
 import TabItem6 from './components/TabItem6';
+import { Button } from '@/component/common/Button';
 
 type navigationMenu = {
   id: number;
@@ -444,7 +445,7 @@ const page = () => {
     <>
       <FormikProvider value={formik}>
         <form onSubmit={formik.handleSubmit}>
-          <Tabs ref={tabsRef} defaultTab={'tab2'}>
+          <Tabs ref={tabsRef} defaultTab={'tab1'}>
             <TabsList>
               <TabsTrigger value="tab1">基本設定</TabsTrigger>
               <TabsTrigger disabled={!isTab1Valid} value="tab2">
@@ -468,7 +469,6 @@ const page = () => {
                 formik={formik}
                 createInputAwardImg={createInputAwardImg}
                 deleteInputAwardImg={deleteInputAwardImg}
-                tabsRef={tabsRef}
               />
             </TabsContent>
             <TabsContent value="tab2">
@@ -477,7 +477,6 @@ const page = () => {
                 deleteNavigationRow={deleteNavigationRow}
                 navigationList={navigationList}
                 setNavigationList={setNavigationList}
-                tabsRef={tabsRef}
               />
             </TabsContent>
             <TabsContent value="tab3">
@@ -486,7 +485,6 @@ const page = () => {
                 iconMenuList={iconMenuList}
                 setIconMenuList={setIconMenuList}
                 deleteIconMenuRow={deleteIconMenuRow}
-                tabsRef={tabsRef}
               />
             </TabsContent>
             <TabsContent value="tab4">
@@ -495,7 +493,6 @@ const page = () => {
                 setSuggestKeywordList={setSuggestKeywordList}
                 addSuggestKeywordRow={addSuggestKeywordRow}
                 deleteSuggestKeywordRow={deleteSuggestKeywordRow}
-                tabsRef={tabsRef}
               />
             </TabsContent>
             <TabsContent value="tab5">
@@ -504,7 +501,6 @@ const page = () => {
                 setSlideList={setSlideList}
                 addSlideRow={addSlideRow}
                 deleteSlideRow={deleteSlideRow}
-                tabsRef={tabsRef}
               />
             </TabsContent>
             <TabsContent value="tab6">
@@ -519,6 +515,16 @@ const page = () => {
               />
             </TabsContent>
           </Tabs>
+          <div className="flex items-center justify-end">
+            <Button
+              disabled={!formik.isValid || formik.isSubmitting}
+              size="lg"
+              type="submit"
+              onClick={formik.submitForm}
+            >
+              プレビュー
+            </Button>
+          </div>
         </form>
       </FormikProvider>
     </>

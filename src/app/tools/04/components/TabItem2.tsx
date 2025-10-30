@@ -10,23 +10,21 @@ interface TabItem2Props {
   deleteNavigationRow: (index: number) => void;
   navigationList: any[];
   setNavigationList: React.Dispatch<React.SetStateAction<any[]>>;
-  tabsRef: React.RefObject<any>;
 }
 const TabItem2 = ({
   addNavigationRow,
   deleteNavigationRow,
   navigationList,
   setNavigationList,
-  tabsRef,
 }: TabItem2Props) => {
-  const handleNextTab = () => {
-    let currentTab = tabsRef.current?.getActiveTab();
-    const currentIndexTab = Number(currentTab.match(/\d+/)?.[0] || 0);
-    tabsRef.current?.setActiveTab(`tab${currentIndexTab + 1}`);
-  };
-
   return (
     <>
+      <Card>
+        <CardHeader title="参考" />
+        <CardContent>
+          <img src={'/img/tool4/tab2_des.jpg'} alt="" />
+        </CardContent>
+      </Card>
       <Card>
         <CardHeader
           title="2. ナビゲーションメニュー設定"
@@ -83,11 +81,6 @@ const TabItem2 = ({
           </Table.Container>
         </CardContent>
       </Card>
-      <div className="flex items-center justify-end">
-        <Button onClick={handleNextTab} size="lg" color="secondary">
-          次へ
-        </Button>
-      </div>
     </>
   );
 };
