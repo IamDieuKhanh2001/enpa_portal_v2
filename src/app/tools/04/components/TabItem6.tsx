@@ -102,25 +102,23 @@ const TabItem6 = ({
               </React.Fragment>
             )}
           </div>
-          {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-x-4 gap-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-x-4 gap-y-4">
             <SelectBox
-              id=""
-              name=""
+              id="colWidth"
+              name="colWidth"
               label="画像の横幅"
               width="full"
               direction="vertical"
-              value={showButtonSetting ? '1' : '0'}
+              value={formik.values.colWidth}
               options={[
                 { value: '2', label: '2列用' },
                 { value: '3', label: '3列用' },
                 { value: '4', label: '4列用' },
                 { value: '6', label: '6列用' },
               ]}
-              onChange={(e) => {
-                setShowButtonSettting(e.target.value === '1' ? true : false);
-              }}
+              onChange={formik.handleChange}
             />
-          </div> */}
+          </div>
           <div className="flex justify-end gap-2 mb-2">
             <Button color="secondary" size="sm" onClick={() => addFeatureRow(1)}>
               行を追加
@@ -136,7 +134,6 @@ const TabItem6 = ({
                 <Table.Th width="w-24">画像</Table.Th>
                 <Table.Th>画像URL</Table.Th>
                 <Table.Th>リンク先URL</Table.Th>
-                <Table.Th>画像の横幅</Table.Th>
                 <Table.Th>削除</Table.Th>
               </Table.Row>
             </Table.Head>
@@ -161,21 +158,6 @@ const TabItem6 = ({
                       );
                     }}
                   />
-                  <Table.SelectBox
-                    value={item.colWidth}
-                    onChange={(e) => {
-                      setFeatureList((prevRows) =>
-                        prevRows.map((r) =>
-                          r.id === item.id ? { ...r, colWidth: e.target.value } : r,
-                        ),
-                      );
-                    }}
-                  >
-                    <Table.Option value={'2'}>2列用</Table.Option>
-                    <Table.Option value={'3'}>3列用</Table.Option>
-                    <Table.Option value={'4'}>4列用</Table.Option>
-                    <Table.Option value={'6'}>6列用</Table.Option>
-                  </Table.SelectBox>
                   <Table.Button onClick={() => deleteFeatureRow(item.id)}>
                     <IconTrash size={20} />
                   </Table.Button>

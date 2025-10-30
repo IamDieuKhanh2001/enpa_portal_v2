@@ -38,7 +38,6 @@ type feature = {
   id: number;
   img: string;
   url: string;
-  colWidth: string;
 };
 const page = () => {
   const { setTitle } = useHeader();
@@ -85,7 +84,6 @@ const page = () => {
       id: 1,
       img: '',
       url: '',
-      colWidth: '2',
     },
   ]);
 
@@ -101,6 +99,7 @@ const page = () => {
       featureTitle: '',
       buttonText: '',
       buttonLink: '',
+      colWidth: '2',
     },
     validationSchema: Yup.object({
       topMessage: Yup.string().trim().required('最上部メッセージを入力してください。'),
@@ -235,7 +234,7 @@ const page = () => {
           (item) => `
             <div class="item">
               <a href=${item.url} target="_blank" rel="noopener noreferrer">
-                <img class=${`img-` + item.colWidth + `col`} src=${item.img}>
+                <img class=${`img-` + values.colWidth + `col`} src=${item.img}>
               </a>
             </div>
         `,
@@ -427,7 +426,6 @@ const page = () => {
           id: prev.length + i + 1,
           img: '',
           url: '',
-          colWidth: '2',
         });
       }
       return [...prev, ...newRows];
