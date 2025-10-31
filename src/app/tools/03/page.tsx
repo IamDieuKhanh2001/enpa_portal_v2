@@ -11,14 +11,15 @@ import React, {
 import { Card, CardContent, CardHeader } from "@/component/common/Card";
 import { Button } from "@/component/common/Button";
 import { Alert } from "@/component/common/Alert";
-import { IconLoader2 } from "@tabler/icons-react";
+import { IconLoader2, IconRefresh } from "@tabler/icons-react";
 import { Toaster, toast } from "sonner";
-import debounce from "lodash/debounce"; // debounce を lodash からインポート
+import debounce from "lodash/debounce";
 
-// 分割されたコンポーネントとロジックをインポート
+// コンポーネントとロジックの分離
 import EditableProductTable from "./components/EditableProductTable";
 import PreviewModal from "./components/PreviewModal";
-import RestoreSessionPopup from "./components/RestoreSessionPopup"; // 新しいポップアップをインポート
+import RestoreSessionPopup from "./components/RestoreSessionPopup";
+import ResetConfirmPopup from "./components/ResetConfirmPopup";
 import { useJobPolling } from "./hooks/useJobPolling";
 import { validateRows } from "./lib/validation";
 import { createNewProductRow } from "./lib/utils";
@@ -29,7 +30,12 @@ import type { ProductRow, AllErrors, BackendJobStatus } from "./types";
 type SonnerToastId = string | number;
 
 // localStorage のキー
-const LOCAL_STORAGE_KEY = "tool03_session_data_v2"; // 古いバージョンとの衝突を避けるために _v2 を追加
+const LOCAL_STORAGE_KEY = "tool03_session_data_v2";
+
+// --- LAZY LOAD (START) ---
+// 一度に表示する画像数
+const BATCH_SIZE = 10;
+// --- LAZY LOAD (END) ---
 
 export default function TwoPriceImagePage() {
   // --- State の宣言 ---
@@ -44,15 +50,23 @@ export default function TwoPriceImagePage() {
   const [jobId, setJobId] = useState<string | null>(null);
   const [isApiLoading, setIsApiLoading] = useState(false);
 
-  // セッション復元用の State
+  // --- LAZY LOAD (START) ---
+  // 表示を許可する画像数を追跡する State
+  const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
+  // --- LAZY LOAD (END) ---
+
+  // セッション復元
   const [showRestorePopup, setShowRestorePopup] = useState(false);
   const [restoredData, setRestoredData] = useState<ProductRow[] | null>(null);
-  const initialLoadRef = useRef(true); // localStorage を初回のみチェックするためのフラグ
+  const initialLoadRef = useRef(true);
+
+  // リセット確認ポップアップ
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const goldUploadToastIdRef = useRef<SonnerToastId | null>(null);
   const rcabinetUploadToastIdRef = useRef<SonnerToastId | null>(null);
 
-  // --- FTP ステータス更新用のコールバックハンドラー (Sonner 使用) ---
+  // --- FTP用コールバック (変更なし) ---
   const handleFtpSuccess = useCallback(
     (target: "gold" | "rcabinet", message: string) => {
       const toastIdRef =
@@ -61,33 +75,31 @@ export default function TwoPriceImagePage() {
         toast.dismiss(toastIdRef.current);
         toastIdRef.current = null;
       }
-      toast.success(message);
+      toast.success(message); // メッセージは日本語で渡される想定
     },
     []
   );
-
   const handleFtpError = useCallback(
     (target: "gold" | "rcabinet", message: string) => {
       const toastIdRef =
         target === "gold" ? goldUploadToastIdRef : rcabinetUploadToastIdRef;
       if (toastIdRef.current) {
-        toast.error(message, { id: toastIdRef.current });
+        toast.error(message, { id: toastIdRef.current }); // メッセージは日本語で渡される想定
         toastIdRef.current = null;
       } else {
-        toast.error(message);
+        toast.error(message); // メッセージは日本語で渡される想定
       }
     },
     []
   );
-  // ----------------------------------------------------------------
+  // -----------------------------------
 
-  // --- ポーリング用カスタムフック ---
+  // --- ポーリング用カスタムフック (変更なし) ---
   const handleJobNotFound = useCallback(() => {
     setJobId(null);
     setGlobalAlert(
       "現在のジョブが見つかりませんでした。新しいジョブを開始します。"
     );
-    // ジョブが見つからない場合、アクティブなアップロードトーストを閉じる
     if (goldUploadToastIdRef.current) {
       toast.dismiss(goldUploadToastIdRef.current);
       goldUploadToastIdRef.current = null;
@@ -112,13 +124,10 @@ export default function TwoPriceImagePage() {
   });
   //------------------------------------
 
-  // --- localStorage ロジック ---
-
-  // State を localStorage に保存する関数 (debounce 使用)
+  // --- localStorage ロジック (変更なし) ---
   const saveStateToLocalStorage = useCallback(
     debounce((rowsToSave: ProductRow[]) => {
       try {
-        // デフォルトの完全に空の行でない場合のみ保存
         const isDefaultEmptyRow =
           rowsToSave.length === 1 &&
           !rowsToSave[0].productCode &&
@@ -129,172 +138,221 @@ export default function TwoPriceImagePage() {
 
         if (!isDefaultEmptyRow) {
           console.log(
-            "[LocalStorage] Saving state...",
-            `(${rowsToSave.length} rows)`
+            "[LocalStorage] 状態を保存中...",
+            `(${rowsToSave.length} 行)`
           );
           const dataString = JSON.stringify(rowsToSave);
           localStorage.setItem(LOCAL_STORAGE_KEY, dataString);
         } else {
-          // デフォルトの空行の場合はストレージから削除
           console.log(
-            "[LocalStorage] Default empty row detected, removing from storage."
+            "[LocalStorage] デフォルトの空行を検出、ストレージから削除します。"
           );
           localStorage.removeItem(LOCAL_STORAGE_KEY);
         }
       } catch (error) {
-        console.error("Error saving state to localStorage:", error);
+        console.error("localStorage への状態保存エラー:", error);
         toast.error(
           "セッションデータの保存中にエラーが発生しました。ストレージがいっぱいかもしれません。"
         );
       }
-    }, 1500), // 1.5秒の debounce
+    }, 1500),
     []
   );
 
-  // productRows を監視し、localStorage に保存する useEffect
   useEffect(() => {
-    // 初回ロード時 (復元処理を待つため) およびクライアントサイドでのみ保存
     if (!initialLoadRef.current && isClient && productRows.length > 0) {
       saveStateToLocalStorage(productRows);
     }
   }, [productRows, saveStateToLocalStorage, isClient]);
 
-  // コンポーネントマウント時に localStorage を読み込む useEffect
   useEffect(() => {
-    setIsClient(true); // クライアントサイドレンダリングをマーク
-
+    setIsClient(true);
     if (initialLoadRef.current) {
       try {
         const savedDataString = localStorage.getItem(LOCAL_STORAGE_KEY);
         if (savedDataString) {
           const parsedData: ProductRow[] = JSON.parse(savedDataString);
-          // データが有効かチェック (配列であり、空でない)
           if (Array.isArray(parsedData) && parsedData.length > 0) {
             setRestoredData(parsedData);
             setShowRestorePopup(true);
             console.log(
-              "[LocalStorage] Found saved session, showing restore popup."
+              "[LocalStorage] 保存されたセッションを発見、復元ポップアップを表示します。"
             );
           } else {
-            // 無効なデータの場合、削除して空行を初期化
             localStorage.removeItem(LOCAL_STORAGE_KEY);
             initializeEmptyRow();
           }
         } else {
-          // データがない場合、空行を初期化
           initializeEmptyRow();
         }
       } catch (error) {
-        console.error("Error reading state from localStorage:", error);
-        localStorage.removeItem(LOCAL_STORAGE_KEY); // エラーデータを削除
+        console.error("localStorage からの状態読み込みエラー:", error);
+        localStorage.removeItem(LOCAL_STORAGE_KEY);
         initializeEmptyRow();
         toast.error("保存されたセッションデータの読み込み中にエラーが発生しました。");
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // マウント時に一度だけ実行
+  }, []);
 
-  // 最初の空行を初期化する関数
-  const initializeEmptyRow = () => {
-    console.log("[LocalStorage] Initializing with an empty row.");
-    const initialRow = createNewProductRow("initial-load-empty");
+  // --- 空行の初期化ロジック (変更なし) ---
+  const initializeEmptyRow = (idPrefix = "initial-load-empty") => {
+    console.log(`[Session] 空行で初期化します (prefix: ${idPrefix}).`);
+    const initialRow = createNewProductRow(idPrefix);
     setProductRows([initialRow]);
     setModifiedRowIds(new Set([initialRow.id]));
-    initialLoadRef.current = false; // 初回ロード完了をマーク
+    setJobId(null);
+    setJobStatus(null);
+    setGlobalAlert(null);
+    setShowErrors(false);
+    setErrors({});
+    clearSavedSession(); // リセット時に古いセッションも削除することを保証
+    initialLoadRef.current = false; // 読み込み完了フラグ
   };
+  // ----------------------------------------------
 
-  // ユーザーがセッション復元を選択したときの処理関数
   const handleRestoreSession = (restore: boolean) => {
     setShowRestorePopup(false);
     if (restore && restoredData) {
-      console.log("[LocalStorage] Restoring session...");
+      console.log("[LocalStorage] セッションを復元しています...");
       setProductRows(restoredData);
       setModifiedRowIds(
-        new Set(restoredData.map((r) => r.id)) // 最初はすべて変更済みとしてマーク
+        new Set(restoredData.map((r) => r.id))
       );
       toast.success("前のセッションを復元しました。");
     } else {
-      console.log("[LocalStorage] Starting new session.");
-      // 復元しない場合、古いデータを削除して新規開始
+      console.log("[LocalStorage] 新しいセッションを開始します。");
       localStorage.removeItem(LOCAL_STORAGE_KEY);
-      initializeEmptyRow(); // 'いいえ' を選択した場合も空行を初期化
+      initializeEmptyRow("initial-new-session"); // 新しい空行を初期化
     }
-    setRestoredData(null); // 一時データをクリア
-    initialLoadRef.current = false; // 初回ロード完了をマーク
+    setRestoredData(null);
+    initialLoadRef.current = false; // 読み込み完了フラグ
   };
 
-  // 完了時またはリセット時にセッションをクリアする関数
   const clearSavedSession = useCallback(() => {
-    console.log("[LocalStorage] Clearing saved session.");
+    console.log("[LocalStorage] 保存されたセッションをクリアします。");
     localStorage.removeItem(LOCAL_STORAGE_KEY);
   }, []);
-
   // --- localStorage ロジック終了 ---
 
-  // productRows と modifiedRowIds を更新するコールバック (変更なし)
+  // --- handleSetProductRows ロジック (変更なし) ---
   const handleSetProductRows = useCallback(
     (newRowsOrFn: ProductRow[] | ((prev: ProductRow[]) => ProductRow[])) => {
       setProductRows((prevRows) => {
-        const newRows =
-          typeof newRowsOrFn === "function"
-            ? newRowsOrFn(prevRows)
-            : newRowsOrFn;
+        let newRows: ProductRow[];
+        let operation: "set" | "append" | "delete" | "reset" | "unknown" =
+          "unknown";
 
         if (typeof newRowsOrFn !== "function") {
-          // Import case
-          setModifiedRowIds(new Set(newRows.map((r) => r.id)));
-          setJobId(null); // Import時はJobをリセット
-          setJobStatus(null);
-          clearSavedSession(); // Import時は古いセッションもクリア
+          // 1. "Set" の場合 (空のテーブルへのインポート)
+          newRows = newRowsOrFn;
+          operation = "set";
         } else {
-          // Delete/Reset case
-          const currentIds = new Set(newRows.map((r) => r.id));
-          setModifiedRowIds((prevModified) => {
-            const nextModified = new Set(prevModified);
-            prevModified.forEach((id) => {
-              if (!currentIds.has(id)) {
-                nextModified.delete(id);
-              }
-            });
-            // 最後の行のリセット処理
-            if (
-              prevRows.length === 1 &&
-              newRows.length === 1 &&
-              prevRows[0].id !== newRows[0].id
-            ) {
-              nextModified.clear();
-              nextModified.add(newRows[0].id);
-              setJobId(null); // Jobもリセット
-              setJobStatus(null);
-              clearSavedSession(); // テーブルリセット時もクリア
-            }
-            return nextModified;
-          });
+          // 2. 関数型更新の場合 (Append, Delete, Reset)
+          newRows = newRowsOrFn(prevRows);
+          if (newRows.length > prevRows.length) {
+            operation = "append";
+          } else if (
+            prevRows.length === 1 &&
+            newRows.length === 1 &&
+            prevRows[0].id !== newRows[0].id
+          ) {
+            operation = "reset";
+          } else {
+            operation = "delete";
+          }
         }
+
+        // `operation` に基づいて他の State を更新
+        const currentIds = new Set(newRows.map((r) => r.id));
+        setModifiedRowIds((prevModified) => {
+          const nextModified = new Set(prevModified);
+
+          // 存在しなくなった ID を削除
+          prevModified.forEach((id) => {
+            if (!currentIds.has(id)) {
+              nextModified.delete(id);
+            }
+          });
+
+          if (operation === "set") {
+            // "Set" (空のテーブルへのインポート): 全てリセットし、新しい ID をすべて追加
+            nextModified.clear();
+            newRows.forEach((r) => nextModified.add(r.id));
+            setJobId(null);
+            setJobStatus(null);
+            clearSavedSession();
+          } else if (operation === "append") {
+            // "Append" (CSV追記インポート): 新しい ID を追加、ジョブはリセットしない
+            const addedRows = newRows.slice(prevRows.length);
+            addedRows.forEach((row) => nextModified.add(row.id));
+            // ここでは jobId やセッションをリセットしない
+          } else if (operation === "reset") {
+            // "Reset" (最後の行の削除): 全てリセット
+            nextModified.clear();
+            nextModified.add(newRows[0].id);
+            setJobId(null);
+            setJobStatus(null);
+            clearSavedSession();
+          }
+          // "delete" または "unknown" は ID の削除のみ (上記で実施済み)
+
+          return nextModified;
+        });
+
         return newRows;
       });
     },
-    [setJobStatus, clearSavedSession] // clearSavedSession を依存関係に追加
+    [setJobStatus, clearSavedSession] // 依存関係は不変
   );
+  // -----------------------------------------------------------
 
-  // プレビューモーダルを閉じる処理 (ジョブ完了時に clearSavedSession を追加)
   const handleCloseModal = useCallback(() => {
     setIsPreviewModalOpen(false);
     setIsApiLoading(false);
     stopPolling();
-    // アクティブなアップロードトーストを閉じる (変更なし)
-    if (goldUploadToastIdRef.current) { toast.dismiss(goldUploadToastIdRef.current); goldUploadToastIdRef.current = null; }
-    if (rcabinetUploadToastIdRef.current) { toast.dismiss(rcabinetUploadToastIdRef.current); rcabinetUploadToastIdRef.current = null; }
-
-    // ジョブがエラーなしで完了した場合、保存されたセッションをクリア
+    // --- LAZY LOAD (START) ---
+    // モーダルを閉じる際に表示数をリセット
+    setVisibleCount(BATCH_SIZE);
+    // --- LAZY LOAD (END) ---
+    if (goldUploadToastIdRef.current) {
+      toast.dismiss(goldUploadToastIdRef.current);
+      goldUploadToastIdRef.current = null;
+    }
+    if (rcabinetUploadToastIdRef.current) {
+      toast.dismiss(rcabinetUploadToastIdRef.current);
+      rcabinetUploadToastIdRef.current = null;
+    }
     if (jobStatus?.status === "Completed") {
       clearSavedSession();
     }
-  }, [stopPolling, jobStatus, clearSavedSession]); // clearSavedSession を依存関係に追加
+  }, [stopPolling, jobStatus, clearSavedSession]);
 
-  // =================================================================
-  // === HÀM ĐÃ SỬA ĐỔI ===
-  // =================================================================
+  // --- リセットボタンのロジック (変更なし) ---
+  const handleResetClick = () => {
+    // テーブルが既に空の場合はポップアップ不要
+    if (
+      productRows.length === 1 &&
+      !productRows[0].productCode &&
+      !productRows[0].startDate &&
+      !productRows[0].regularPrice
+    ) {
+      toast.info("テーブルは既に空です。");
+      return;
+    }
+    setShowResetConfirm(true);
+  };
+
+  const handleResetConfirm = (confirm: boolean) => {
+    setShowResetConfirm(false);
+    if (confirm) {
+      initializeEmptyRow("manual-reset");
+      toast.success("テーブルをリセットしました。");
+    }
+  };
+  // ---------------------------------------
+
+  // handlePreviewClick 関数 (修正済み)
   const handlePreviewClick = async () => {
     setGlobalAlert(null);
     const { errors: validationErrors, isValid } = validateRows(productRows);
@@ -305,19 +363,20 @@ export default function TwoPriceImagePage() {
       return;
     }
 
-    // --- Xóa session đã lưu khi bắt đầu tạo job ---
     clearSavedSession();
-    // ------------------------------------------
-
     setIsApiLoading(true);
     setIsPreviewModalOpen(true);
     setShowErrors(false);
+    // --- LAZY LOAD (START) ---
+    // モーダルを開く際に表示数をリセット
+    setVisibleCount(BATCH_SIZE);
+    // --- LAZY LOAD (END) ---
 
     try {
       let currentJobId = jobId;
       if (!currentJobId) {
-        // --- LOGIC POST (TẠO JOB MỚI) ---
-        console.log(">>> [DEBUG][Page] Creating new job (POST)");
+        // --- POST ロジック (新規ジョブ作成) ---
+        console.log(">>> [DEBUG][Page] 新規ジョブを作成中 (POST)");
         const payload = { productRows };
         const response = await fetch("/api/tools/03/jobs", {
           method: "POST",
@@ -326,23 +385,22 @@ export default function TwoPriceImagePage() {
         });
 
         if (!response.ok) {
-          let errorDetail = `HTTP error! status: ${response.status}`;
+          let errorDetail = `HTTPエラー! status: ${response.status}`;
           try {
             const errorData = await response.json();
             errorDetail = errorData.detail || errorDetail;
-          } catch (e) { /* Bỏ qua lỗi parse JSON */ }
+          } catch (e) { /* JSON パースエラーは無視 */ }
           throw new Error(errorDetail);
         }
 
-        const data: { jobId: string; totalItems: number } = await response.json();
+        const data: { jobId: string; totalItems: number } =
+          await response.json();
         const newJobId = data.jobId;
 
         setJobId(newJobId);
-        // Đặt trạng thái ban đầu là "Pending" - modal sẽ hiển thị "待機中..."
-        // useJobPolling sẽ ngay lập tức poll và cập nhật sang "Processing"
         setJobStatus({
           jobId: newJobId,
-          status: "Pending", // Trạng thái này sẽ hiển thị "待機中..."
+          status: "Pending", // この状態で "待機中..." と表示される
           progress: 0,
           total: data.totalItems,
           results: {},
@@ -354,38 +412,39 @@ export default function TwoPriceImagePage() {
           ftpUploadStatusRcabinet: "idle",
           ftpUploadErrorRcabinet: null,
         });
-        setIsApiLoading(false); // Ngừng loading API (polling sẽ tiếp tục)
-        setModifiedRowIds(new Set()); // Reset các dòng đã sửa đổi
-        console.log(">>> [DEBUG][Page] New job created, Job ID:", newJobId);
+        setIsApiLoading(false);
+        setModifiedRowIds(new Set());
+        console.log(">>> [DEBUG][Page] 新規ジョブ作成完了, Job ID:", newJobId);
       } else {
-        // --- LOGIC PATCH (CẬP NHẬT JOB) ---
-        console.log(">>> [DEBUG][Page] Updating job (PATCH), Job ID:", currentJobId);
-
-        console.log(">>> [DEBUG] modifiedRowIds before PATCH filter:", modifiedRowIds);
-        const rowsToUpdate = productRows.filter((row) => modifiedRowIds.has(row.id));
-        console.log(">>> [DEBUG] rowsToUpdate for PATCH:", rowsToUpdate);
+        // --- PATCH ロジック (ジョブ更新) ---
+        console.log(
+          ">>> [DEBUG][Page] ジョブを更新中 (PATCH), Job ID:",
+          currentJobId
+        );
+        console.log(
+          ">>> [DEBUG] PATCH フィルター前の modifiedRowIds:",
+          modifiedRowIds
+        );
+        const rowsToUpdate = productRows.filter((row) =>
+          modifiedRowIds.has(row.id)
+        );
+        console.log(">>> [DEBUG] PATCH 対象の rowsToUpdate:", rowsToUpdate);
 
         if (rowsToUpdate.length > 0) {
-
-          // --- SỬA ĐỔI LOGIC: Đơn giản hóa việc cập nhật trạng thái ---
-          // Đặt trạng thái thành "Processing" để đảm bảo polling
-          // tiếp tục hoặc bắt đầu lại một cách chính xác.
           setJobStatus((prev) => ({
-             // Giữ lại jobId, startTime từ `prev` nếu có, nếu không thì dùng `currentJobId`
             jobId: currentJobId,
             startTime: prev?.startTime ?? Date.now() / 1000,
-            status: "Processing", // Đặt là "Processing" (画像生成中...)
-            progress: 0, // Reset tiến trình (polling sẽ cập nhật)
-            total: productRows.length, // Cập nhật tổng số
-            results: prev?.results ?? {}, // Tạm giữ kết quả cũ (sẽ được cập nhật bởi polling)
+            status: "Processing", // "Processing" (画像生成中...) に設定
+            progress: 0,
+            total: productRows.length,
+            results: prev?.results ?? {},
             message: null,
             endTime: null,
-            ftpUploadStatusGold: "idle", // Reset FTP
+            ftpUploadStatusGold: "idle",
             ftpUploadErrorGold: null,
-            ftpUploadStatusRcabinet: "idle", // Reset FTP
+            ftpUploadStatusRcabinet: "idle",
             ftpUploadErrorRcabinet: null,
           }));
-          // --- KẾT THÚC SỬA ĐỔI ---
 
           const payload = { productRows: rowsToUpdate };
           const response = await fetch(`/api/tools/03/jobs/${currentJobId}`, {
@@ -395,41 +454,37 @@ export default function TwoPriceImagePage() {
           });
 
           if (!response.ok) {
-            let errorDetail = `HTTP error! status: ${response.status}`;
+            let errorDetail = `HTTPエラー! status: ${response.status}`;
             try {
               const errorData = await response.json();
               errorDetail = errorData.detail || errorDetail;
-            } catch (e) { /* Bỏ qua lỗi parse JSON */ }
+            } catch (e) { /* JSON パースエラーは無視 */ }
             throw new Error(errorDetail);
           }
 
-          setIsApiLoading(false); // Ngừng loading API
-          setModifiedRowIds(new Set()); // Reset các dòng đã sửa đổi
-          console.log(">>> [DEBUG][Page] Job update initiated. Polling should continue/restart.");
-
+          setIsApiLoading(false);
+          setModifiedRowIds(new Set());
+          console.log(
+            ">>> [DEBUG][Page] ジョブ更新を開始しました。ポーリングが続行/再開されます。"
+          );
         } else {
-          // Không có dòng nào thay đổi, chỉ cần mở modal (polling sẽ không chạy nếu job đã hoàn thành)
-          console.log(">>> [DEBUG][Page] No rows modified, skipping PATCH.");
+          console.log(">>> [DEBUG][Page] 変更された行がないため、PATCH をスキップします。");
           setIsApiLoading(false);
         }
       }
     } catch (error) {
-      // Xử lý lỗi chung khi gọi API (POST hoặc PATCH)
-      console.error("Failed to start or update job:", error);
-      toast.error(`ジョブの開始/更新に失敗しました: ${error instanceof Error ? error.message : "不明なエラー"}`);
+      console.error("ジョブの開始または更新に失敗しました:", error);
+      toast.error(
+        `ジョブの開始/更新に失敗しました: ${
+          error instanceof Error ? error.message : "不明なエラー"
+        }`
+      );
       setIsApiLoading(false);
-      setIsPreviewModalOpen(false); // Đóng modal nếu có lỗi
-      // Không reset jobId, vì job có thể đã tồn tại
-      // setJobId(null);
-      // setJobStatus(null);
+      setIsPreviewModalOpen(false);
     }
   };
-  // =================================================================
-  // === KẾT THÚC HÀM ĐÃ SỬA ĐỔI ===
-  // =================================================================
 
-
-  // ZIPダウンロード処理 (変更なし)
+  // ダウンロード/アップロード関数 (変更なし)
   const handleDownloadZip = () => {
     if (!jobId || jobStatus?.status === "Failed") {
       toast.error("ダウンロードするジョブが見つからないか、失敗しました。");
@@ -438,55 +493,99 @@ export default function TwoPriceImagePage() {
     window.open(`/api/tools/03/jobs/${jobId}/download`, "_blank");
   };
 
-  // FTPアップロード処理 (変更なし)
   const handleUploadFTP = async (target: "gold" | "rcabinet") => {
-    if (!jobId || !jobStatus || !["Completed", "Completed with errors"].includes(jobStatus.status)) {
-       toast.error("アップロードするジョブが見つからないか、まだ完了していません。");
-       return;
+    if (
+      !jobId ||
+      !jobStatus ||
+      !["Completed", "Completed with errors"].includes(jobStatus.status)
+    ) {
+      toast.error("アップロードするジョブが見つからないか、まだ完了していません。");
+      return;
     }
     const targetName = target === "gold" ? "Rakuten GOLD" : "R-Cabinet";
-    const toastIdRef = target === "gold" ? goldUploadToastIdRef : rcabinetUploadToastIdRef;
-    const ftpStatusKey = target === "gold" ? "ftpUploadStatusGold" : "ftpUploadStatusRcabinet";
-    const ftpErrorKey = target === "gold" ? "ftpUploadErrorGold" : "ftpUploadErrorRcabinet";
+    const toastIdRef =
+      target === "gold" ? goldUploadToastIdRef : rcabinetUploadToastIdRef;
+    const ftpStatusKey =
+      target === "gold" ? "ftpUploadStatusGold" : "ftpUploadStatusRcabinet";
+    const ftpErrorKey =
+      target === "gold" ? "ftpUploadErrorGold" : "ftpUploadErrorRcabinet";
 
     if (toastIdRef.current || jobStatus[ftpStatusKey] === "uploading") {
-       toast.info(`${targetName} へのアップロードは既に進行中です。`);
-       return;
+      toast.info(`${targetName} へのアップロードは既に進行中です。`);
+      return;
     }
-    setJobStatus((prev) => prev ? { ...prev, [ftpStatusKey]: "uploading", [ftpErrorKey]: null } : null);
-    toastIdRef.current = toast.loading(`${targetName} へのアップロードを開始しています...`);
+    setJobStatus((prev) =>
+      prev ? { ...prev, [ftpStatusKey]: "uploading", [ftpErrorKey]: null } : null
+    );
+    toastIdRef.current = toast.loading(
+      `${targetName} へのアップロードを開始しています...`
+    );
 
     try {
       const response = await fetch(`/api/tools/03/jobs/${jobId}/upload`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ target: target }),
-       });
+      });
       if (response.status === 202) {
-          console.log(`>>> [DEBUG][Page] ${targetName} upload initiated. Polling will track status.`);
+        console.log(
+          `>>> [DEBUG][Page] ${targetName} アップロード開始。ポーリングでステータスを追跡します。`
+        );
       } else {
-          let errorDetail = `HTTP error! status: ${response.status}`;
-          try { const errorData = await response.json(); errorDetail = errorData.detail || errorDetail; } catch (e) { /* Ignore */ }
-          if (toastIdRef.current) { toast.error(`${targetName} へのアップロード開始に失敗しました: ${errorDetail}`, { id: toastIdRef.current }); toastIdRef.current = null; }
-          setJobStatus((prev) => prev ? { ...prev, [ftpStatusKey]: "failed", [ftpErrorKey]: errorDetail } : null);
+        let errorDetail = `HTTPエラー! status: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          errorDetail = errorData.detail || errorDetail;
+        } catch (e) { /* 無視 */ }
+        if (toastIdRef.current) {
+          toast.error(
+            `${targetName} へのアップロード開始に失敗しました: ${errorDetail}`,
+            { id: toastIdRef.current }
+          );
+          toastIdRef.current = null;
+        }
+        setJobStatus((prev) =>
+          prev
+            ? { ...prev, [ftpStatusKey]: "failed", [ftpErrorKey]: errorDetail }
+            : null
+        );
       }
     } catch (error) {
-       console.error(`Failed to start ${target} upload:`, error);
-       const errorMessage = error instanceof Error ? error.message : String(error);
-       if (toastIdRef.current) { toast.error(`${targetName} へのアップロード開始に失敗しました: ${errorMessage}`, { id: toastIdRef.current }); toastIdRef.current = null; }
-       setJobStatus((prev) => prev ? { ...prev, [ftpStatusKey]: "failed", [ftpErrorKey]: errorMessage } : null);
+      console.error(`${target} アップロードの開始に失敗:`, error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (toastIdRef.current) {
+        toast.error(
+          `${targetName} へのアップロード開始に失敗しました: ${errorMessage}`,
+          { id: toastIdRef.current }
+        );
+        toastIdRef.current = null;
+      }
+      setJobStatus((prev) =>
+        prev
+          ? { ...prev, [ftpStatusKey]: "failed", [ftpErrorKey]: errorMessage }
+          : null
+      );
     }
   };
   // ---------------------------------
 
   const isModalLoading = isApiLoading || isPollingLoading;
 
+  // --- LAZY LOAD (START) ---
+  // ジョブが実行中かどうかを判断 (テーブルを無効化するため)
+  const isJobRunning =
+    jobStatus?.status === "Processing" || jobStatus?.status === "Pending";
+  // 全体のローディング状態 (最初の API 呼び出しも含む)
+  const isProcessing =
+    isApiLoading || (isPollingLoading && !jobStatus) || isJobRunning;
+  // --- LAZY LOAD (END) ---
+
   // --- JSX Return ---
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-gray-800">二重価格画像作成</h1>
 
-      {/* テンプレート選択 */}
+      {/* テンプレート選択 (変更なし) */}
       <Card>
         <CardHeader title="1. テンプレート選択" />
         <CardContent>
@@ -521,7 +620,6 @@ export default function TwoPriceImagePage() {
       </Card>
 
       {/* 編集可能テーブル */}
-      {/* 初回ロード後かつポップアップが表示されていない場合にのみテーブルをレンダリング */}
       {isClient && !showRestorePopup && (
         <EditableProductTable
           rows={productRows}
@@ -531,26 +629,49 @@ export default function TwoPriceImagePage() {
           setModifiedRowIds={setModifiedRowIds}
           jobId={jobId}
           setJobId={setJobId}
+          // --- LAZY LOAD (START) ---
+          // `disabled` プロパティを渡す
+          disabled={isProcessing && isPreviewModalOpen}
+          // --- LAZY LOAD (END) ---
         />
       )}
-      {/* ポップアップ待機中にローディングインジケーターを表示 */}
       {isClient && showRestorePopup && (
-         <div className="text-center p-10 text-gray-500">セッションデータを読み込み中...</div>
+        <div className="text-center p-10 text-gray-500">
+          セッションデータを読み込み中...
+        </div>
       )}
 
       {/* グローバルアラート */}
       {globalAlert && <Alert variant="error">{globalAlert}</Alert>}
 
-      {/* プレビューボタン */}
-      {/* ポップアップが表示されていない場合にのみボタンを表示 */}
+      {/* ボタン群 (更新) */}
       {!showRestorePopup && (
-        <div className="flex justify-center pt-4">
+        <div className="flex justify-center items-center space-x-4 pt-4">
+          <Button
+            color="secondary"
+            onClick={handleResetClick}
+            // --- LAZY LOAD (START) ---
+            // モーダルが開いていて処理中の場合は無効化
+            disabled={isProcessing && isPreviewModalOpen}
+            // --- LAZY LOAD (END) ---
+            className="inline-flex items-center"
+          >
+            <IconRefresh size={18} className="mr-1.5" />
+            リセット
+          </Button>
           <Button
             color="primary"
             onClick={handlePreviewClick}
-            disabled={isModalLoading && isPreviewModalOpen}
+            // --- LAZY LOAD (START) ---
+            // モーダルが開いていて処理中の場合は無効化
+            disabled={isProcessing && isPreviewModalOpen}
+            // --- LAZY LOAD (END) ---
+            className="inline-flex items-center"
           >
-            {isModalLoading && isPreviewModalOpen ? (
+            {/* --- LAZY LOAD (START) ---
+             // モーダルが開いていて処理中の場合のみスピナーを表示
+            // --- LAZY LOAD (END) --- */}
+            {isProcessing && isPreviewModalOpen ? (
               <IconLoader2 className="animate-spin mr-2" />
             ) : null}
             画像生成
@@ -580,7 +701,7 @@ export default function TwoPriceImagePage() {
         </div>
       )}
 
-      {/* 生成画像プレビューモーダル (変更なし) */}
+      {/* 生成画像プレビューモーダル */}
       <PreviewModal
         isOpen={isPreviewModalOpen}
         onClose={handleCloseModal}
@@ -591,14 +712,24 @@ export default function TwoPriceImagePage() {
         onUploadFTP={handleUploadFTP}
         isUploadingGold={jobStatus?.ftpUploadStatusGold === "uploading"}
         isUploadingRcabinet={jobStatus?.ftpUploadStatusRcabinet === "uploading"}
+        // --- LAZY LOAD (START) ---
+        // State とハンドラ関数を渡す
+        visibleCount={visibleCount}
+        onLoadMore={() => setVisibleCount((prev) => prev + BATCH_SIZE)}
+        // --- LAZY LOAD (END) ---
       />
 
-      {/* セッション復元ポップアップ */}
+      {/* セッション復元ポップアップ (変更なし) */}
       {showRestorePopup && (
         <RestoreSessionPopup onResponse={handleRestoreSession} />
       )}
 
-      {/* Sonner Toaster */}
+      {/* Reset popup (変更なし) */}
+      {showResetConfirm && (
+        <ResetConfirmPopup onResponse={handleResetConfirm} />
+      )}
+
+      {/* Sonner Toaster (変更なし) */}
       <Toaster richColors position="top-right" />
     </div>
   );
